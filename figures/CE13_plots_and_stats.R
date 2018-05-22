@@ -21,7 +21,7 @@ ggsave("CE13_distribution_small_molecules.tiff",width = 7, height = 5, units = "
 #---------------------------------------------------------------------
 # Calculate p-values and display subsystem enrichment in a heat map
 #---------------------------------------------------------------------
-file_name = "..\\data\\EssRxns_S.mitis_enrichment.tsv"
+file_name = "../data/EssRxns_S.mitis_enrichment.tsv"
 mitis_params = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 pvals = matrix(0,nrow = nrow(mitis_params)-1, ncol = 6)
 N = mitis_params[1,2]
@@ -36,7 +36,7 @@ for(i in 1:nrow(mitis_params))
   pvals[i,1] = sum(dhyper(x:k,N,M,k))
 }
 
-file_name = "..\\data\\EssRxns_S.gallolyticus_enrichment.tsv"
+file_name = "../data/EssRxns_S.gallolyticus_enrichment.tsv"
 gallolyticus_params = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 N = gallolyticus_params[1,2]
 M = gallolyticus_params[1,1] - N
@@ -50,7 +50,7 @@ for(i in 1:nrow(gallolyticus_params))
   pvals[i,2] = sum(dhyper(x:k,N,M,k))
 }
 
-file_name = "..\\data\\EssRxns_S.oralis_enrichment.tsv"
+file_name = "../data/EssRxns_S.oralis_enrichment.tsv"
 oralis_params = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 N = oralis_params[1,2]
 M = oralis_params[1,1] - N
@@ -64,7 +64,7 @@ for(i in 1:nrow(oralis_params))
   pvals[i,3] = sum(dhyper(x:k,N,M,k))
 }
 
-file_name = "..\\data\\EssRxns_S.equinus_enrichment.tsv"
+file_name = "../data/EssRxns_S.equinus_enrichment.tsv"
 equinus_params = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 N = equinus_params[1,2]
 M = equinus_params[1,1] - N
@@ -78,7 +78,7 @@ for(i in 1:nrow(equinus_params))
   pvals[i,4] = sum(dhyper(x:k,N,M,k))
 }
 
-file_name = "..\\data\\EssRxns_S.pneumoniae_enrichment.tsv"
+file_name = "../data/EssRxns_S.pneumoniae_enrichment.tsv"
 pneumoniae_params = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 N = pneumoniae_params[1,2]
 M = pneumoniae_params[1,1] - N
@@ -92,7 +92,7 @@ for(i in 1:nrow(pneumoniae_params))
   pvals[i,5] = sum(dhyper(x:k,N,M,k))
 }
 
-file_name = "..\\data\\EssRxns_S.vestibularis_enrichment.tsv"
+file_name = "../data/EssRxns_S.vestibularis_enrichment.tsv"
 vestibularis_params = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 N = vestibularis_params[1,2]
 M = vestibularis_params[1,1] - N
@@ -107,7 +107,7 @@ for(i in 1:nrow(vestibularis_params))
 }
 
 # Read in subsystem names
-file_name = "..\\data\\CE13_uniqueSubsystems.txt"
+file_name = "../data/CE13_uniqueSubsystems.txt"
 subsystems = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 row.names(pvals) = subsystems$V1
 colnames(pvals) = c("S.mitis","S.gallolyticus","S.oralis","S.equinus","S.pneumoniae","S.vestibularis")
@@ -120,7 +120,7 @@ negLogPvals = -log(pvals)
 negLogPvals = negLogPvals[order(-rowSums(negLogPvals)),]
 negLogPvals = negLogPvals[rowSums(negLogPvals) > 1.5,]
 
-write.table(negLogPvals, file = "..\\data\\CE13_subsystemEnrichment.tsv", append = FALSE, quote = FALSE, sep = "\t",row.names = TRUE,col.names = TRUE)
+write.table(negLogPvals, file = "../data/CE13_subsystemEnrichment.tsv", append = FALSE, quote = FALSE, sep = "\t",row.names = TRUE,col.names = TRUE)
 
 colors = colorRampPalette(c("white", 'blue'))(50)
 fontsize = 10
@@ -165,7 +165,7 @@ for(i in 1:nrow(negLogPvals))
   correlations[i,6] = cor(vestibularis,negLogPvals[i,])
 }
 
-write.table(correlations, file = "..\\data\\CE13_subsystemEnrichment_correlations.tsv", append = FALSE, quote = FALSE, sep = "\t",row.names = TRUE,col.names = TRUE)
+write.table(correlations, file = "../data/CE13_subsystemEnrichment_correlations.tsv", append = FALSE, quote = FALSE, sep = "\t",row.names = TRUE,col.names = TRUE)
 
 
 

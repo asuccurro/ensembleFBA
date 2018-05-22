@@ -13,7 +13,7 @@ jacc = c()
 times = c()
 for (i in c(2,5,10,15,20,25,30))
 {
-  file_name = paste0("..\\data\\CE2_globalVsequential_",i,".tsv")
+  file_name = paste0("../data/CE2_globalVsequential_",i,".tsv")
   seqData = read.table(file_name, row.names=NULL, sep = "\t", header=F)
   
   # Calculate the difference in model size (parsimony of the solution) and solution time

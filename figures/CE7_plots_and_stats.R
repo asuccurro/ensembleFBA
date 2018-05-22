@@ -9,11 +9,11 @@ library(dplyr)
 #-----------------------------------------------------------------
 # Read in data
 #-----------------------------------------------------------------
-file_name = "..\\data\\CE7_networkPrecisionsNRecalls.tsv"
+file_name = "../data/CE7_networkPrecisionsNRecalls.tsv"
 networkAPR = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 colnames(networkAPR) = c("Accuracy","Precision","Recall")
 
-file_name = "..\\data\\CE7_ensemblePrecisionsNRecalls.tsv"
+file_name = "../data/CE7_ensemblePrecisionsNRecalls.tsv"
 ensembleAPR = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 rownames(ensembleAPR) = c("t1","tHalf","tAll")
 ensembleAPR = data.frame(ensembleAPR)

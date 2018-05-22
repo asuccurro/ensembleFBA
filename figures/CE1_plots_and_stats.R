@@ -12,7 +12,7 @@ seq_urxns = c()
 seq_jacc = c()
 for (i in c(2,5,10,15,20,25,30))
 {
-  file_name = paste0("..\\data\\CE1_gapFillSequence_",i,"_gcs.tsv")
+  file_name = paste0("../data/CE1_gapFillSequence_",i,"_gcs.tsv")
   seqData = read.table(file_name, row.names=NULL, sep = "\t", header=F)
   
   # Estimate a 95% confidence interval assuming a normal distribution

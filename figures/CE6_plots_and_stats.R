@@ -9,29 +9,29 @@ library(dplyr)
 #-----------------------------------------------------------------
 # Read in data
 #-----------------------------------------------------------------
-file_name = "..\\data\\CE6_networkPrecision.tsv"
+file_name = "../data/CE6_networkPrecision.tsv"
 networkPrecision = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 colnames(networkPrecision) = c("Precision","N_gcs")
 
-file_name = "..\\data\\CE6_ensemblePrecision.tsv"
+file_name = "../data/CE6_ensemblePrecision.tsv"
 ensemblePrecision = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 colnames(ensemblePrecision) = c("Precision_t1","Precision_tHalf","Precision_tAll","N_gcs")
 ensemblePrecision_df = melt(ensemblePrecision,id=c("N_gcs"))
 
-file_name = "..\\data\\CE6_networkRecall.tsv"
+file_name = "../data/CE6_networkRecall.tsv"
 networkRecall = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 colnames(networkRecall) = c("Recall","N_gcs")
 
-file_name = "..\\data\\CE6_ensembleRecall.tsv"
+file_name = "../data/CE6_ensembleRecall.tsv"
 ensembleRecall = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 colnames(ensembleRecall) = c("Recall_t1","Recall_tHalf","Recall_tAll","N_gcs")
 ensembleRecall_df = melt(ensembleRecall,id=c("N_gcs"))
 
-file_name = "..\\data\\CE6_networkAccuracy.tsv"
+file_name = "../data/CE6_networkAccuracy.tsv"
 networkAccuracies = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 colnames(networkAccuracies) = c("Accuracy","N_gcs")
 
-file_name = "..\\data\\CE6_ensembleAccuracy.tsv"
+file_name = "../data/CE6_ensembleAccuracy.tsv"
 ensembleAccuracy = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 colnames(ensembleAccuracy) = c("Accuracy_t1","Accuracy_tHalf","Accuracy_tAll","N_gcs")
 ensembleAccuracy_df = melt(ensembleAccuracy,id=c("N_gcs"))

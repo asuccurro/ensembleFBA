@@ -9,7 +9,7 @@ library(dplyr)
 #-----------------------------------------------------------------
 # Read in data and calulate empirical 95% confidence intervals
 #-----------------------------------------------------------------
-file_name = paste0("..\\data\\CE3_globalVsequential.tsv")
+file_name = paste0("../data/CE3_globalVsequential.tsv")
 data = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 
 colnames(data) = c("Seq.Sim.2.iPAU","Glob.Sim.2.iPAU","Seq.Size","Glob.Size","Seq.Solve.Time","Glob.Solve.Time")

@@ -9,7 +9,7 @@ library(dplyr)
 #-----------------------------------------------------------------
 # Read in data
 #-----------------------------------------------------------------
-file_name = "..\\data\\CE8_ensemblePrecisionsNRecalls.tsv"
+file_name = "../data/CE8_ensemblePrecisionsNRecalls.tsv"
 ensemblesAPR = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 colnames(ensemblesAPR) = c("Accuracy","Precision","Recall")
 
@@ -25,7 +25,7 @@ recallMat = cbind(ensemblesAPR[13:16,3],ensemblesAPR[9:12,3],ensemblesAPR[5:8,3]
 colnames(recallMat) = c("100% GCs","80% GCs","60% GCs","30% GCs")
 rownames(recallMat) = c("30% Genes","60% Genes","80% Genes","100% Genes")
 
-file_name = "..\\data\\CE8_ensembleJaccardSims.tsv"
+file_name = "../data/CE8_ensembleJaccardSims.tsv"
 ensemblesJS = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 ensemblesJS$rows = 1:16
 colnames(ensemblesJS) = c("JaccardSimilarity","Rows")

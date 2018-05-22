@@ -9,7 +9,7 @@ library(dplyr)
 #-----------------------------------------------------------------
 # Read in data
 #-----------------------------------------------------------------
-file_name = "..\\data\\CE12_stochastic_rxn_dist.tsv"
+file_name = "../data/CE12_stochastic_rxn_dist.tsv"
 rxnDistributionS = read.table(file_name, row.names=NULL, sep = "\t", header=F)
 colnames(rxnDistributionS) = c("Correct","Incorrect","InitialDist")
 rxnDistributionS$sum = rxnDistributionS$Correct + rxnDistributionS$Incorrect
