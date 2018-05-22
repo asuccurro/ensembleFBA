@@ -1,3 +1,24 @@
+# Forked repository for ensembleFBA
+
+This is a forked copy of Biggs MB and Papin JA's [EnsembleFBA](https://github.com/mbi2gs/ensembleFBA)
+
+## Install R virtualenv
+
+```bash
+virtualenv -p /usr/bin/python2.7 venvr
+source venvr/bin/activate
+pip install rvenv
+rvenv reshape2
+rvenv dplyr
+rvenv pheatmap
+rvenv ggplot2 
+rvenv RColorBrewer
+```
+
+
+
+# Original README below
+
 # ensembleFBA
 
 This repository contains the data, code and figures associated with the manuscript:
