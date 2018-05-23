@@ -167,7 +167,7 @@ params.sequential = 1;      % We want sequential gap filling (one growth conditi
 params.stochast = 1;        % Random element to gap filling
 params.rndSeed = 1216;      % Setting the random seed ensures reproducibility
 params.numModels2gen = 1;   % How many models do you want in your ensemble?
-params.verbose = 0;         % 0 means we don't want to get updates about what's going on under the hood
+params.verbose = 1;         % 0 means we don't want to get updates about what's going on under the hood
 
 %------------------------------------------------------------------------
 % Gap fill a model!

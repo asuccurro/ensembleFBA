@@ -320,6 +320,8 @@ while iterate > 0
         end
         
     catch gurobiError
+
+        gurobiError.message
         
         if verbose > 1
             gurobiError.message
