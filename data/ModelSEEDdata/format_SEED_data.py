@@ -1,9 +1,10 @@
-#------------------------------------------------------------------		
+#------------------------------------------------------------------
 # Read in SEED rxn database and format for easy use in MATLAB
 # Written by Matt Biggs, 2016
+# Modified by Antonella Succurro, 2018
 #------------------------------------------------------------------
 
-#------------------------------------------------------------------		
+#------------------------------------------------------------------
 # Classes and functions
 #------------------------------------------------------------------
 cmpdID2name = {}
@@ -12,10 +13,18 @@ rxnID2name = {}
 usedCmpds = []
 rxnIDlist = []
 
-#------------------------------------------------------------------		
+# original ModelSeed db files
+#cmpdFileName='compounds.master_30Mar16.tsv'
+#rxnFileName = 'reactions.master_30Mar16.tsv'
+
+# updated ModelSeed db files
+cmpdFileName='../../rhizobiumRoot491/db/compounds.tsv'
+rxnFileName='../../rhizobiumRoot491/db/reactions.tsv'
+
+#------------------------------------------------------------------
 # Read compound file and make dictionary
 #------------------------------------------------------------------
-cmpdFile = open('compounds.master_30Mar16.tsv','r')
+cmpdFile = open(cmpdFileName,'r')
 
 for line in cmpdFile:
 	if line.find('id	abbreviation	name	formula	mass	source') == -1:
@@ -26,22 +35,21 @@ for line in cmpdFile:
 		# names
 		name = lps[2]
 		cmpdID2name[cid] = name
-		# formula	
+		# formula
 		formula = lps[3]
 		cmpdID2formula[cid] = formula
 cmpdFile.close()
 
 #------------------------------------------------------------------
-# Make reaction network 
+# Make reaction network
 #------------------------------------------------------------------
-rxnFileName = 'reactions.master_30Mar16.tsv'
 rxnFile = open(rxnFileName,'r')
 
 # First, keep only the compounds from valid reactions
 usedCmpds = []
 for line in rxnFile:
-	if line.find('id	abbreviation	name	code	stoichiometry	is_transport	equation') == -1:   
-		# 0		1				2		3		4				5				6			7			8				9			10					11			12		13			14		15			16				17		18			19	
+	if line.find('id	abbreviation	name	code	stoichiometry	is_transport	equation') == -1:
+		# 0		1				2		3		4				5				6			7			8				9			10					11			12		13			14		15			16				17		18			19
 		# id	abbreviation	name	code	stoichiometry	is_transport	equation	definition	reversibility	direction	abstract_reaction	pathways	aliases	ec_numbers	deltag	deltagerr	compound_ids	status	is_obsolete	linked_reaction
 		lps = line.split('\t')
 		is_transport = lps[5].strip()
@@ -76,30 +84,30 @@ rxnFile = open(rxnFileName,'r')
 pathMatOutFile = open('complete_SEED_matrix.tsv','w')
 
 for line in rxnFile:
-	if line.find('id	abbreviation	name	code	stoichiometry	is_transport	equation') == -1:   
-		# 0		1				2		3		4				5				6			7			8				9			10					11			12		13			14		15			16				17		18			19	
+	if line.find('id	abbreviation	name	code	stoichiometry	is_transport	equation') == -1:
+		# 0		1				2		3		4				5				6			7			8				9			10					11			12		13			14		15			16				17		18			19
 		# id	abbreviation	name	code	stoichiometry	is_transport	equation	definition	reversibility	direction	abstract_reaction	pathways	aliases	ec_numbers	deltag	deltagerr	compound_ids	status	is_obsolete	linked_reaction
 		lps = line.split('\t')
 		rxnID = lps[0]
 		status = lps[17].strip()
-		is_obsolete = lps[18].strip()	
-		if rxnID in rxnIDset:			
+		is_obsolete = lps[18].strip()
+		if rxnID in rxnIDset:
 			stoichiometry = lps[4]
-			
+
 			rev = '0'
 			if lps[8].find('='):
 				rev = '1'
-			
+
 			# Write reaction in sparse format
 			stoich_parts = stoichiometry.split(';')
-			sparseStr = rxnID + '\t' + rev + '\t' 
-			for sp in stoich_parts:				
+			sparseStr = rxnID + '\t' + rev + '\t'
+			for sp in stoich_parts:
 				spps = sp.split(':')
 				# each pair in parentheses contains the index of the coefficient, and the value at that index
-				sparseStr += '(' + str(usedCmpds.index(spps[1])+1) + ',' + spps[0] + ')|' 
+				sparseStr += '(' + str(usedCmpds.index(spps[1])+1) + ',' + spps[0] + ')|'
 			sparseStr = sparseStr.rstrip('|')
 			sparseStr += '\t' + rxnID2name[rxnID]
-			pathMatOutFile.write(sparseStr + '\n')			
+			pathMatOutFile.write(sparseStr + '\n')
 
 rxnFile.close()
 pathMatOutFile.close()
@@ -109,5 +117,3 @@ cmpdNameOutfile = open('compound_info_SEED.tsv','w')
 for cmpID in usedCmpds:
 	cmpdNameOutfile.write(cmpID + '\t' + cmpdID2formula[cmpID] + '\t' + cmpdID2name[cmpID] + '\n')
 cmpdNameOutfile.close()
-
-

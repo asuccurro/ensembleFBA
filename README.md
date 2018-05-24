@@ -15,6 +15,16 @@ rvenv ggplot2
 rvenv RColorBrewer
 ```
 
+## ModelSEED db
+
+The database for compounds (updated on Feb 21, 2018) and reactions (updated on Nov 14, 2017) in rhizobiumRoot491/db/ have been downloaded on May 24th, 2018:
+
+```bash
+wget https://raw.githubusercontent.com/ModelSEED/ModelSEEDDatabase/master/Biochemistry/reactions.json
+wget https://raw.githubusercontent.com/ModelSEED/ModelSEEDDatabase/master/Biochemistry/reactions.tsv
+wget https://raw.githubusercontent.com/ModelSEED/ModelSEEDDatabase/master/Biochemistry/compounds.json
+wget https://raw.githubusercontent.com/ModelSEED/ModelSEEDDatabase/master/Biochemistry/compounds.tsv 
+```
 
 
 # Original README below
