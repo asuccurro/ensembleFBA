@@ -14,6 +14,7 @@ load seed_rxns
 seed_rxns_mat.X = -1*speye(length(seed_rxns_mat.mets));
 seed_rxns_mat.Ex_names = strcat('Ex_',seed_rxns_mat.mets);
 
+
 % Get the PA14 data formatted with work with the SEED database
 %       PA14Data.biomassFn,growthCarbonSources,growthConditions,nonGrowthCarbonSources,nonGrowthConditions
 [PA14Data] = getPA14GrowthConditions(seed_rxns_mat);
