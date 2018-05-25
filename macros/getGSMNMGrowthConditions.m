@@ -11,11 +11,11 @@ function [GSMNMData] = getGSMNMGrowthConditions(universalRxnSet)
 %       and metabolite formulas (metFormulas)
 %
 % Outputs:
-%     PA14Data - a Matlab struct with the following fields:
+%     GSMNMData - a Matlab struct with the following fields:
 %       biomassFn - the same format as a rxn (column) in universalRxnSet.S
-%       growthCarbonSources - the list of carbon sources which allow growth
+%       growthXSources - the list of carbon/nitrogen/x sources which allow growth
 %       growthConditions - a matrix of lower bounds for the exchange rxns in universalRxnSet.X
-%       nonGrowthCarbonSources - the list of carbon sources which do not allow growth
+%       nonGrowthXSources - the list of carbon/nitrogen/x sources which do not allow growth
 %       nonGrowthConditions - a matrix of lower bounds for the exchange rxns in universalRxnSet.X
 %
 % Written by Matt Biggs
@@ -75,9 +75,6 @@ p = []
 for k = 1:length(bm_products);
   p = [p, find(strcmp(universalRxnSet.mets, bm_products(k)))];
 end
-
-
-
 
 biomassFn(s,1) = -1;
 biomassFn(p,1) = 1;
