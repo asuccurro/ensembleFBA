@@ -87,7 +87,7 @@ def main():
     baselinemedia = set(media[wells[0]]).intersection(set(media[wells[1]]))
     print('> Baseline media composition:')
     for m in baselinemedia:
-        sbp = subprocess.Popen(("grep", "-i", "%s"%m, "../data/ModelSEEDdata/compounds.tsv"), stdout = subprocess.PIPE)
+        sbp = subprocess.Popen(("grep", "-i", "%s"%m, "%s"%args.db), stdout = subprocess.PIPE)
         match = (sbp.communicate()[0]).decode('ascii').split('\t')[2]
         print('\t', m, match)
     outfile = open(args.outpath+'ncompounds.tsv','w')
@@ -109,8 +109,9 @@ def options():
     parser.add_argument('-V', '--verbose', help='increase output verbosity', action='store_true')
     parser.add_argument('-m', '--mediafile', help='tsv file with media definition', default='../data/ModelSEEDdata/media_list_with_meta.tsv')
     parser.add_argument('-c', '--compoundname', help='name of source compound', default='Nitrogen')
-    parser.add_argument('-b', '--biolog', help='name of biolog tsv file', default='../rhizobiumRoot491/data/biolog_summary.csv')
+    parser.add_argument('-b', '--biolog', help='name of biolog tsv file', default='../rhizobiumRoot491/data/biolog_summary.tsv')
     parser.add_argument('-o', '--outpath', help='path for output file', default='../rhizobiumRoot491/media/singleNMedia/')
+    parser.add_argument('-d', '--db', help='database file', default="../data/ModelSEEDdata/compounds.tsv")
     args = parser.parse_args()
     if args.verbose:
         print("verbosity turned on")
