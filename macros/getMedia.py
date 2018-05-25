@@ -8,6 +8,7 @@
 
 import argparse
 import subprocess
+import collections
 
 def main():
     args = options()
@@ -18,6 +19,8 @@ def main():
     mmf = open('/tmp/multimatched.log','w')
     nmf = open('/tmp/notmatched.log','w')
     wells = []
+    media = collections.defaultdict(list)
+    ncpds = {}
     with open(args.mediafile,'r') as infile:
         for line in infile:
             l = line.split('\t')
@@ -50,12 +53,14 @@ def main():
                         outfile.write('ID\tminFlux\tmaxFlux\tconcentration\n')
                         for cpd in c:
                             outfile.write(cpd.replace(';','\t')+'\n')
+                            media[x[0]].append(cpd.split(';')[0])
                     mf.write(x[0]+'\t'+n+'\n')
                     wells.append(x[0])
     #wells.sort()
     mf.close()
     mmf.close()
     nmf.close()
+    #print(media[wells[0]])
 
     nfw=[]
     #subs = map(lambda x: x[x.index('cpd'):x.index('cpd')+8], s)
@@ -78,6 +83,24 @@ def main():
     #    outfile.write('s = {\''+'\', \''.join(subs)+'\'};\n')
     #    outfile.write('p = {\''+'\', \''.join(prods)+'\'};\n')
     #    outfile.write('end')
+
+    baselinemedia = set(media[wells[0]]).intersection(set(media[wells[1]]))
+    print('> Baseline media composition:')
+    for m in baselinemedia:
+        sbp = subprocess.Popen(("grep", "-i", "%s"%m, "../data/ModelSEEDdata/compounds.tsv"), stdout = subprocess.PIPE)
+        match = (sbp.communicate()[0]).decode('ascii').split('\t')[2]
+        print('\t', m, match)
+    outfile = open(args.outpath+'ncompounds.tsv','w')
+    outfile.write('Well\tSEEDID\n')
+    for w in wells:
+        ncpds[w] = list(set(media[w]) - baselinemedia)[0]
+        outfile.write(w+'\t'+ncpds[w]+'\n')
+    outfile.close()
+    outfile = open(args.outpath+'baselinemedia.m','w')
+    outfile.write('function [m] = baselinemedia()\n')
+    outfile.write('m = {\''+'\', \''.join(baselinemedia)+'\'};\n')
+    outfile.write('end')
+    outfile.close()
 
 
 def options():
