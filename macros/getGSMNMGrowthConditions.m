@@ -108,7 +108,7 @@ for k = 1:length(xNonGrowth);
   if length(x) > 0
     nonGrowthXSources = [nonGrowthXSources, x];
   else
-    fprintf(['AS-WARNING ' char(xNonGrowth(k,:)) ' (growth sustaining) not found in the rxn matrix\n']);
+    fprintf(['AS-WARNING ' char(xNonGrowth(k,:)) ' (not growth sustaining) not found in the rxn matrix\n']);
   end
 end
 
