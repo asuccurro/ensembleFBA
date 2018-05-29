@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 #************************************
 #**  author: Antonella Succurro    **
 #**  email:a.succurro[AT]gmail.com **
@@ -13,7 +14,7 @@ def main():
     args = options()
     verbose = args.verbose
     sbp = subprocess.Popen(("grep", "-w", "%s"%args.bmname, "%s"%args.rxnstsv), stdout = subprocess.PIPE)
-    l = sbp.communicate()[0]
+    l = sbp.communicate()[0].decode('ascii')
     #with open('bio1.txt','r') as infile:
     #    for line in infile:
     #        l = line
@@ -38,11 +39,11 @@ def options():
     parser.add_argument('-V', '--verbose', help='increase output verbosity', action='store_true')
     parser.add_argument('-r', '--rxnstsv', help='path to the GSMNM reactions tsv file', default='../rhizobiumRoot491/draftgsmn/tsv/rhizobiumRoot491-reactions.tsv')
     parser.add_argument('-b', '--bmname', help='biomass reaction name', default='bio1')
-    parser.add_argument('-o', '--outpath', help='path for output file', default='../runmatlab/')
+    parser.add_argument('-o', '--outpath', help='path for output file', default='../rhizobiumRoot491/draftgsmn/')
     args = parser.parse_args()
     if args.verbose:
-        print "verbosity turned on"
-        print args
+        print("verbosity turned on")
+        print(args)
     return args
 
 if __name__=="__main__":
