@@ -15,6 +15,14 @@ rvenv ggplot2
 rvenv RColorBrewer
 ```
 
+## Install py virtualenv
+
+```bash
+virtualenv -p /usr/bin/python3 venvpy
+source venvpy/bin/activate
+pip install -r req_venvpy.txt
+```
+
 ## ModelSEED db
 
 The database for compounds (updated on Feb 21, 2018) and reactions (updated on Nov 14, 2017) in rhizobiumRoot491/db/ have been downloaded on May 24th, 2018:
