@@ -46,7 +46,7 @@ for k = 1:length(bm_substrates);
   if length(x) > 0;
     s = [s, x];
   else
-    fprintf(['AS-WARNING ' char(bm_substrates(k)) ' biomass substrate not found!']);
+    fprintf(['AS-WARNING ' char(bm_substrates(k)) ' biomass substrate not found!\n']);
   end
 end
 
@@ -56,7 +56,7 @@ for k = 1:length(bm_products);
   if length(x) > 0
     s = [s, x];
   else
-    fprintf(['AS-WARNING ' char(bm_products(k)) ' biomass product not found!']);
+    fprintf(['AS-WARNING ' char(bm_products(k)) ' biomass product not found!\n']);
   end
 end
 
@@ -95,7 +95,7 @@ for k = 1:length(xGrowth);
   if length(x) > 0
     growthXSources = [growthXSources, x];
   else
-    fprintf([char(xGrowth(k,:)) ' not found in the rxn matrix\n']);
+    fprintf(['AS-WARNING ' char(xGrowth(k,:)) ' (growth sustaining) not found in the rxn matrix\n']);
   end
 end
 
@@ -104,7 +104,12 @@ xNonGrowth = xst.SEEDID(xst.Growth == 0, :);
 % Get indexes
 nonGrowthXSources = [];
 for k = 1:length(xNonGrowth);
-  nonGrowthXSources = [nonGrowthXSources, find(strcmp(universalRxnSet.mets, xNonGrowth(k,:)))];
+  x = find(strcmp(universalRxnSet.mets, xNonGrowth(k,:)));
+  if length(x) > 0
+    nonGrowthXSources = [nonGrowthXSources, x];
+  else
+    fprintf(['AS-WARNING ' char(xNonGrowth(k,:)) ' (growth sustaining) not found in the rxn matrix\n']);
+  end
 end
 
 n = length(growthXSources);
