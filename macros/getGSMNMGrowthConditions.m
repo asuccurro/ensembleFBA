@@ -83,7 +83,7 @@ if not (isfield(xst, 'Growth'))
 end
 
 % Get list of compound names sustaining growth
-xGrowth = x.SEEDID(x.Growth > 0, :);
+xGrowth = xst.SEEDID(xst.Growth > 0, :);
 % Get indexes
 growthXSources = [];
 for k = 1:length(xGrowth);
@@ -91,7 +91,7 @@ for k = 1:length(xGrowth);
 end
 
 % Get list of compound names not sustaining growth
-xNonGrowth = x.SEEDID(x.Growth == 0, :);
+xNonGrowth = xst.SEEDID(xst.Growth == 0, :);
 % Get indexes
 nonGrowthXSources = [];
 for k = 1:length(xNonGrowth);
