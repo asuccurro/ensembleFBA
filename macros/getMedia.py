@@ -114,7 +114,7 @@ def options():
     parser.add_argument('-c', '--compoundname', help='name of source compound', default='Nitrogen')
     parser.add_argument('-b', '--biolog', help='name of biolog tsv file', default='../rhizobiumRoot491/data/biolog_summary.tsv')
     parser.add_argument('-o', '--outpath', help='path for output file', default='../rhizobiumRoot491/media/singleNMedia/')
-    parser.add_argument('-d', '--db', help='database file', default="../data/ModelSEEDdata/compounds.tsv")
+    parser.add_argument('-d', '--db', help='database file', default='../data/ModelSEEDdata/compounds.tsv')
     args = parser.parse_args()
     if args.verbose:
         print("verbosity turned on")
