@@ -30,7 +30,7 @@ function [GSMNMData] = getGSMNMGrowthConditions(universalRxnSet, xSourcesTable)
 % check that the Ex_names field exhists:
 
 if not (isfield(universalRxnSet, 'Ex_names'))
-  seed_rxns_mat.Ex_names = strcat('Ex_',seed_rxns_mat.mets);
+  universalRxnSet.Ex_names = strcat('Ex_',universalRxnSet.mets);
 end
 
 % BIOMASS
