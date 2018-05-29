@@ -17,14 +17,17 @@ def main():
     verbose = args.verbose
     wte = args.exclude.split(' ')
     df = pandas.read_csv(args.biolog, sep='\t')
+    print(df.shape)
     dfe = df[df['Well'].isin(wte)]
     print('Removing the following wells from growth matrix:', dfe)
     df = df[~df['Well'].isin(wte)]
+    print(df.shape)
     gw = list(df.loc[df[args.id]>0, 'Well'])
     ngw = list(df.loc[df[args.id]==0, 'Well'])
     odf = pandas.read_csv(args.compounds, sep='\t')
-    odf['Growth'] = 0
+    odf['Growth'] = -1
     odf.loc[odf['Well'].isin(gw), 'Growth'] = 1
+    odf.loc[odf['Well'].isin(ngw), 'Growth'] = 0
     odf.to_csv(args.outpath+'growthMatrix_'+args.id+'.csv', index=False)
 
 def options():

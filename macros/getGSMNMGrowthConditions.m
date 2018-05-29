@@ -27,12 +27,6 @@ function [GSMNMData] = getGSMNMGrowthConditions(universalRxnSet, xSourcesTable)
 % Written by Antonella Succurro, building on the function getPA14GrowthConditions by Matt Biggs
 %--------------------------------------------------------------------------
 
-% check that the Ex_names field exhists:
-
-if not (isfield(universalRxnSet, 'Ex_names'))
-  universalRxnSet.Ex_names = strcat('Ex_',universalRxnSet.mets);
-end
-
 % BIOMASS
 
 %Call the biomass function, automatically written by the script GetBM.py,
@@ -43,7 +37,7 @@ end
 %+1 elements corresponding to products and
 %-1 elements corresponding to substrates
 %init as zeros:
-biomassFn = zeros(length(universalRxnSet.Ex_names),1);
+biomassFn = zeros(length(universalRxnSet.mets),1);
 
 % Match biomass' list of compound IDs to the seed_rxns_mat.mets indexes
 s = [];
@@ -65,7 +59,7 @@ biomassFn(p,1) = 1;
 %to get the vector metabolites composing the baseline media
 blmedia = baselinemedia();
 
-minimalMediaBase = zeros(length(universalRxnSet.Ex_names),1);
+minimalMediaBase = zeros(length(universalRxnSet.mets),1);
 b = [];
 for k = 1:length(blmedia);
   b = [b, find(strcmp(universalRxnSet.mets, blmedia(k)))];
