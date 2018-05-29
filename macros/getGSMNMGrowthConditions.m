@@ -46,7 +46,7 @@ for k = 1:length(bm_substrates);
   if length(x) > 0;
     s = [s, x];
   else
-    fprintf(['AS-WARNING ' bm_substrates(k) ' biomass substrate not found!']);
+    fprintf(['AS-WARNING ' char(bm_substrates(k)) ' biomass substrate not found!']);
   end
 end
 
@@ -56,7 +56,7 @@ for k = 1:length(bm_products);
   if length(x) > 0
     s = [s, x];
   else
-    fprintf(['AS-WARNING ' bm_products(k) ' biomass product not found!']);
+    fprintf(['AS-WARNING ' char(bm_products(k)) ' biomass product not found!']);
   end
 end
 
