@@ -42,12 +42,22 @@ biomassFn = zeros(length(universalRxnSet.mets),1);
 % Match biomass' list of compound IDs to the seed_rxns_mat.mets indexes
 s = [];
 for k = 1:length(bm_substrates);
-  s = [s, find(strcmp(universalRxnSet.mets, bm_substrates(k)))];
+  x = find(strcmp(universalRxnSet.mets, bm_substrates(k));
+  if length(x) > 0;
+    s = [s, x];
+  else
+    fprintf(['AS-WARNING ' bm_substrates(k) ' biomass substrate not found!']);
+  end
 end
 
 p = [];
 for k = 1:length(bm_products);
-  p = [p, find(strcmp(universalRxnSet.mets, bm_products(k)))];
+  x = find(strcmp(universalRxnSet.mets, bm_products(k));
+  if length(x) > 0
+    s = [s, x];
+  else
+    fprintf(['AS-WARNING ' bm_products(k) ' biomass product not found!']);
+  end
 end
 
 biomassFn(s,1) = -1;
@@ -81,7 +91,12 @@ xGrowth = xst.SEEDID(xst.Growth > 0, :);
 % Get indexes
 growthXSources = [];
 for k = 1:length(xGrowth);
-  growthXSources = [growthXSources, find(strcmp(universalRxnSet.mets, xGrowth(k,:)))];
+  x = find(strcmp(universalRxnSet.mets, xGrowth(k,:)));
+  if length(x) > 0
+    growthXSources = [growthXSources, x];
+  else
+    fprintf([char(xGrowth(k,:)) ' not found in the rxn matrix\n'])
+  end
 end
 
 % Get list of compound names not sustaining growth

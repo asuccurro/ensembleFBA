@@ -18,8 +18,8 @@ rxnIDlist = []
 #rxnFileName = 'reactions.master_30Mar16.tsv'
 
 # updated ModelSeed db files
-cmpdFileName='../../rhizobiumRoot491/db/compounds.tsv'
-rxnFileName='../../rhizobiumRoot491/db/reactions.tsv'
+cmpdFileName='compounds.tsv'
+rxnFileName='reactions.tsv'
 
 #------------------------------------------------------------------
 # Read compound file and make dictionary
