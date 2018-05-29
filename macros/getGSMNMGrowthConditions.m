@@ -46,12 +46,12 @@ end
 biomassFn = zeros(length(universalRxnSet.Ex_names),1);
 
 % Match biomass' list of compound IDs to the seed_rxns_mat.mets indexes
-s = []
+s = [];
 for k = 1:length(bm_substrates);
   s = [s, find(strcmp(universalRxnSet.mets, bm_substrates(k)))];
 end
 
-p = []
+p = [];
 for k = 1:length(bm_products);
   p = [p, find(strcmp(universalRxnSet.mets, bm_products(k)))];
 end
@@ -66,7 +66,7 @@ biomassFn(p,1) = 1;
 blmedia = baselinemedia();
 
 minimalMediaBase = zeros(length(universalRxnSet.Ex_names),1);
-b = []
+b = [];
 for k = 1:length(blmedia);
   b = [b, find(strcmp(universalRxnSet.mets, blmedia(k)))];
 end
@@ -74,7 +74,7 @@ end
 minimalMediaBase(b,1) = -1000;
 
 %Open the xSourcesTable
-xst = tdfread(xSourcesTable);
+xst = tdfread(xSourcesTable, ',');
 if not (isfield(xst, 'SEEDID'))
   fprintf('\nERROR! The X source table does not contain the SEEDID field!\n\n')
 end
