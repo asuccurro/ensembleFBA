@@ -96,9 +96,11 @@ def main():
         ncpds[w] = list(set(media[w]) - baselinemedia)[0]
         outfile.write(w+'\t'+ncpds[w]+'\n')
     outfile.close()
+    blm = list(baselinemedia)
+    blm.sort()
     outfile = open(args.outpath+'baselinemedia.m','w')
     outfile.write('function [m] = baselinemedia()\n')
-    outfile.write('m = {\''+'\', \''.join(baselinemedia)+'\'};\n')
+    outfile.write('m = {\''+'\', \''.join(blm)+'\'};\n')
     outfile.write('end')
     outfile.close()
 
