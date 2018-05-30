@@ -162,9 +162,14 @@ for i = 1:numModels2gen
     mostConsistentDatabase = struct;
     nonConsistWithNGCs = size(nonGrowthConditions,2);
     handicap = 0;   
-    
+
+    iterationid = 0;
     while iterate > 0
- 
+
+        iterationid = iterationid + 1;
+        if verbose > 0
+            fprintf(['*** At iteration ' num2str(iterationid) '\n']);
+        end   
         %----------------------------------------------------
         % Expand
         %----------------------------------------------------
@@ -178,6 +183,9 @@ for i = 1:numModels2gen
                 end
 
                 if j == 1 || growth < 0.05
+                    if verbose > 0
+                        fprintf(['*** Cannot grow on growth condition ' num2str(j) '\n']);
+                    end   
                     [mdl, rxnDatabase, ~, ~, feasible] = expand(universalRxnSet,...
                                                                 growthConditions(:,j),...
                                                                 tmpNonGrowthConditions,...
@@ -251,6 +259,9 @@ for i = 1:numModels2gen
                     % Don't trim any more if there are already 10 reactions
                     % being removed
                     if growth > 0
+                        if verbose > 0
+                            fprintf(['*** Can grow on non growth condition ' num2str(j) '\n']);
+                        end   
                         didItGrowInNGC = didItGrowInNGC + 1;
                     end
                     if growth > 0 && sum(~sequentialTrimmedRxns) < 10                    

@@ -229,6 +229,11 @@ while iterate > 0
         if verbose > 1
             disp(result)
         end
+        if verbose > 0
+            fprintf(['\nObjective size:   ' num2str(size(objective)) '\n']);
+            fprintf(['A size:           ' num2str(size(A)) '\n']);
+            fprintf([char(result.status) '\n']);
+        end
         
         n_front = n_UX*n_cond;
         r_u = result.x(n_front+1 : n_front+n_Urxns);
