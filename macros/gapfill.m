@@ -10,18 +10,18 @@
 %************************************
 
 % Load universal reaction database and add exchange rxns
-load seed_rxns
+load 2018_seed_rxns
 seed_rxns_mat.X = -1*speye(length(seed_rxns_mat.mets));
 seed_rxns_mat.Ex_names = strcat('Ex_',seed_rxns_mat.mets);
 
 
 % Get the GSMNM data formatted with work with the SEED database
 %       GSMNMData.biomassFn,growthXSources,growthConditions,nonGrowthXSources,nonGrowthConditions
-[GSMNMData] = getGSMNMGrowthConditions(seed_rxns_mat);
+[GSMNMData] = getGSMNMGrowthConditions(seed_rxns_mat, 'growthMatrix_Root491.csv');
 
 % Get the GSMNM gene-to-reaction mappings
 %       GSMNMGenomicData.rxn_GPR_mapping
-[GSMNMGenomicData] = getGSMNMGenomeAnnotations();
+[GSMNMGenomicData] = getGSMNMGenomeAnnotations('rhizobiumRoot491-reactions.tsv');
 rxnList = GSMNMGenomicData.rxn_GPR_mapping.rxns;
 
 % Force networks to contain reactions annotated from the genome
@@ -45,7 +45,7 @@ params = struct;
 params.sequential = 1;
 params.stochast = 0;
 params.numModels2gen = 1;
-params.verbose = 1;
+params.verbose = 2;
 
 jaccardSim = @(a,b) sum(ismember(a,b))/length(unique([a(:);b(:)]))';
 

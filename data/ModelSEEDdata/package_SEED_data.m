@@ -35,7 +35,7 @@ for i = 1:length(rxns{3})
     end
 end
 
-save('seed_rxns.mat','seed_rxns_mat');
+save('2018_seed_rxns.mat','seed_rxns_mat');
 
 % Load in the EC-number-to-reaction mappings
 fid = fopen('Enzyme_Class.aliases.txt','r');
@@ -104,5 +104,5 @@ for i = 1:length(seed_aliases.rxns)
     seed_aliases.rxnKEGGids{i} = strjoin(rxnKEGGids(matches)','|');
 end
 
-save('seed_aliases.mat','seed_aliases');
+save('2018_seed_aliases.mat','seed_aliases');
 

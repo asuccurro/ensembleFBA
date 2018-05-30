@@ -30,15 +30,15 @@ trimmed_rxnList = rxns.id(:,1:8);
 trimmed_rxnList = strtrim(cellstr(trimmed_rxnList));
 
 %Select only rxns with (non empty? check!) gpr field
-trimmed_gpr = strtrim(cellstr(rxns.gpr));
+trimmed_gprs = strtrim(cellstr(rxns.gpr));
 %The only empty gpr field is the biomass, rxns w/o gpr have "Unknown"
-keep = ~cellfun(@isempty,trimmed_gpr);
+keep = ~cellfun(@isempty,trimmed_gprs);
 trimmed_rxnList = trimmed_rxnList(keep);
-trimmed_gpr = trimmed_gpr(keep);
+trimmed_gprs = trimmed_gprs(keep);
 
-remove = find(strcmp(trimmed_gpr, 'Unknown'));
+remove = find(strcmp(trimmed_gprs, 'Unknown'));
 trimmed_rxnList(remove) = [];
-trimmed_gpr(remove) = [];
+trimmed_gprs(remove) = [];
 
 rxn_GPR_mapping = struct;
 rxn_GPR_mapping.rxns = trimmed_rxnList;
