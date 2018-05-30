@@ -54,7 +54,7 @@ p = [];
 for k = 1:length(bm_products);
   x = find(strcmp(universalRxnSet.mets, bm_products(k)));
   if length(x) > 0
-    s = [s, x];
+    p = [p, x];
   else
     fprintf(['AS-WARNING ' char(bm_products(k)) ' biomass product not found!\n']);
   end
