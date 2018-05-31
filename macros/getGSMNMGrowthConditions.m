@@ -36,6 +36,8 @@ switch nargin
     usePA14BM = 0;
 end
 
+cpdsNotFound = [];
+
 %Call the biomass function, automatically written by the script GetBM.py,
 %to get the vectors of BM substrates and products
 if usePA14BM
@@ -57,6 +59,7 @@ else
             s = [s, x];
         else
             fprintf(['AS-WARNING ' char(bm_substrates(k)) ' biomass substrate not found!\n']);
+            cpdsNotFound = [cpdsNotFound bm_substrates(k)];
         end
     end
 
@@ -67,6 +70,7 @@ else
             p = [p, x];
         else
             fprintf(['AS-WARNING ' char(bm_products(k)) ' biomass product not found!\n']);
+            cpdsNotFound = [cpdsNotFound bm_products(k)];
         end
     end
 
@@ -108,6 +112,7 @@ for k = 1:length(xGrowth);
     growthXSources = [growthXSources, x];
   else
     fprintf(['AS-WARNING ' char(xGrowth(k,:)) ' (growth sustaining) not found in the rxn matrix\n']);
+    cpdsNotFound = [cpdsNotFound cellstr(xGrowth(k,:))];
   end
 end
 
@@ -121,6 +126,7 @@ for k = 1:length(xNonGrowth);
     nonGrowthXSources = [nonGrowthXSources, x];
   else
     fprintf(['AS-WARNING ' char(xNonGrowth(k,:)) ' (not growth sustaining) not found in the rxn matrix\n']);
+    cpdsNotFound = [cpdsNotFound cellstr(xNonGrowth(k,:))];
   end
 end
 
@@ -142,5 +148,7 @@ GSMNMData.growthXSources = growthXSources;
 GSMNMData.growthConditions = growthConditions;
 GSMNMData.nonGrowthXSources = nonGrowthXSources;
 GSMNMData.nonGrowthConditions = nonGrowthConditions;
+
+printGrepLoop(cpdsNotFound);
 
 end
