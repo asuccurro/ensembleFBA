@@ -13,6 +13,8 @@ rxnID2name = {}
 usedCmpds = []
 rxnIDlist = []
 
+EXCLUDETRANSPORT = True
+
 # original ModelSeed db files
 #cmpdFileName='compounds.master_30Mar16.tsv'
 #rxnFileName = 'reactions.master_30Mar16.tsv'
@@ -58,7 +60,7 @@ for line in rxnFile:
 		if status.find('OK') > -1 and \
 		   status.find('CI') == -1 and \
 		   status.find('MI') == -1 and \
-		   is_obsolete == '0': # and is_transport == '0':
+		   is_obsolete == '0' and (is_transport == '0' and EXCLUDETRANSPORT):
 			rxnID = lps[0]
 			rxnName = lps[2]
 			rxnID2name[rxnID] = rxnName
@@ -74,8 +76,10 @@ rxnFile.close()
 usedCmpds = list(set(usedCmpds))
 rxnIDset = set(rxnIDlist)
 
-#print 'Excluding transport or obsolete reactions, in the complete database there are:'
-print 'NOT Excluding transport, excluding obsolete reactions, in the complete database there are:'
+if EXCLUDETRANSPORT:
+    print 'Excluding transport or obsolete reactions, in the complete database there are:'
+else:
+    print 'NOT Excluding transport, excluding obsolete reactions, in the complete database there are:'
 print str(len(rxnIDlist)) + ' reactions'
 print str(len(usedCmpds)) + ' compounds'
 

@@ -234,6 +234,12 @@ while iterate > 0
             fprintf(['A size:           ' num2str(size(A)) '\n']);
             fprintf([char(result.status) '\n']);
         end
+
+        if ~strcmp(char(result.status),'OPTIMAL')
+            fprintf(['The LP solution is ' char(result.status) ', this expansion attempt is over\n']);
+            return;
+        end
+            
         
         n_front = n_UX*n_cond;
         r_u = result.x(n_front+1 : n_front+n_Urxns);

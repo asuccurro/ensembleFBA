@@ -1,4 +1,4 @@
-function [GSMNMData] = getGSMNMGrowthConditions(universalRxnSet, xSourcesTable)
+function [GSMNMData] = getGSMNMGrowthConditions(universalRxnSet, xSourcesTable, usePA14BM)
 %--------------------------------------------------------------------------
 % getGSMNMGrowthConditions - Generates a biomass function, and formats the
 % growth conditions for use with the input rxn database.
@@ -29,39 +29,51 @@ function [GSMNMData] = getGSMNMGrowthConditions(universalRxnSet, xSourcesTable)
 
 % BIOMASS
 
+switch nargin
+  case 3
+    usePA14BM = usePA14BM;
+  otherwise
+    usePA14BM = 0;
+end
+
 %Call the biomass function, automatically written by the script GetBM.py,
 %to get the vectors of BM substrates and products
-[bm_substrates, bm_products] = biomass();
+if usePA14BM
+    load biomassFn_PA14_2018
+    biomassFn = biomassFn_PA14;
+else
+    [bm_substrates, bm_products] = biomass();
+    %The biomassFn is a vector with
+    %+1 elements corresponding to products and
+    %-1 elements corresponding to substrates
+    %init as zeros:
+    biomassFn = zeros(length(universalRxnSet.mets),1);
 
-%The biomassFn is a vector with
-%+1 elements corresponding to products and
-%-1 elements corresponding to substrates
-%init as zeros:
-biomassFn = zeros(length(universalRxnSet.mets),1);
+    % Match biomass' list of compound IDs to the seed_rxns_mat.mets indexes
+    s = [];
+    for k = 1:length(bm_substrates);
+        x = find(strcmp(universalRxnSet.mets, bm_substrates(k)));
+        if length(x) > 0;
+            s = [s, x];
+        else
+            fprintf(['AS-WARNING ' char(bm_substrates(k)) ' biomass substrate not found!\n']);
+        end
+    end
 
-% Match biomass' list of compound IDs to the seed_rxns_mat.mets indexes
-s = [];
-for k = 1:length(bm_substrates);
-  x = find(strcmp(universalRxnSet.mets, bm_substrates(k)));
-  if length(x) > 0;
-    s = [s, x];
-  else
-    fprintf(['AS-WARNING ' char(bm_substrates(k)) ' biomass substrate not found!\n']);
-  end
+    p = [];
+    for k = 1:length(bm_products);
+        x = find(strcmp(universalRxnSet.mets, bm_products(k)));
+        if length(x) > 0
+            p = [p, x];
+        else
+            fprintf(['AS-WARNING ' char(bm_products(k)) ' biomass product not found!\n']);
+        end
+    end
+
+    biomassFn(s,1) = -1;
+    biomassFn(p,1) = 1;
 end
 
-p = [];
-for k = 1:length(bm_products);
-  x = find(strcmp(universalRxnSet.mets, bm_products(k)));
-  if length(x) > 0
-    p = [p, x];
-  else
-    fprintf(['AS-WARNING ' char(bm_products(k)) ' biomass product not found!\n']);
-  end
-end
-
-biomassFn(s,1) = -1;
-biomassFn(p,1) = 1;
 
 % MEDIA
 
