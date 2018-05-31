@@ -9,11 +9,6 @@
 %** Based on the scripts from Matt Biggs, 2016
 %************************************
 
-load seed_rxns
-seed_rxns_mat.X = -1*speye(length(seed_rxns_mat.mets));
-seed_rxns_mat.Ex_names = strcat('Ex_',seed_rxns_mat.mets);
-old_seed_rxns_mat = seed_rxns_mat
-
 % Load universal reaction database and add exchange rxns
 load 2018_seed_rxns
 seed_rxns_mat.X = -1*speye(length(seed_rxns_mat.mets));
@@ -21,14 +16,7 @@ seed_rxns_mat.Ex_names = strcat('Ex_',seed_rxns_mat.mets);
 
 % Get the GSMNM data formatted with work with the SEED database
 %       GSMNMData.biomassFn,growthXSources,growthConditions,nonGrowthXSources,nonGrowthConditions
-[GSMNMData] = getGSMNMGrowthConditions(seed_rxns_mat, 'growthMatrix_Root491.csv');
-
-% use instead of the bio1 function the one from the PA14 model
-
-pa = getPA14GrowthConditions(seed_rxns_mat);
-pas = seed_rxns_mat.mets(pa.biomassFn < 0);
-pap = seed_rxns_mat.mets(pa.biomassFn > 0);
-GSMNMData.biomassFn = myBiomassBuilder(seed_rxns_mat, pas, pap)
+[GSMNMData] = getGSMNMGrowthConditions(seed_rxns_mat, 'growthMatrix_Root491.csv', 1);
 
 % Get the GSMNM gene-to-reaction mappings
 %       GSMNMGenomicData.rxn_GPR_mapping
@@ -56,7 +44,7 @@ params = struct;
 params.sequential = 1;
 params.stochast = 0;
 params.numModels2gen = 1;
-params.verbose = 2;
+params.verbose = 1;
 
 jaccardSim = @(a,b) sum(ismember(a,b))/length(unique([a(:);b(:)]))';
 
@@ -64,8 +52,8 @@ jaccardSim = @(a,b) sum(ismember(a,b))/length(unique([a(:);b(:)]))';
 % Does order matter?
 % Gap fill sequentially, in different orders
 %------------------------------------------------------------------------
-N_iter = 3;
-N_gcs_list = [2,5];
+N_iter = 5;
+N_gcs_list = [2,5,10,15];
 for k = 1:length(N_gcs_list);
     N_gcs = N_gcs_list(k);
     fprintf(['Number of growth conditions: ' num2str(N_gcs) '\n']);
