@@ -35,7 +35,7 @@ switch nargin
   case 3
     usePA14BM = usePA14BM;
   otherwise
-    usePA14BM = 0;
+    usePA14BM = 1;
 end
 
 cpdsNotFound = [];
