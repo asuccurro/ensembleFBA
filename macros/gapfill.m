@@ -52,8 +52,8 @@ jaccardSim = @(a,b) sum(ismember(a,b))/length(unique([a(:);b(:)]))';
 % Does order matter?
 % Gap fill sequentially, in different orders
 %------------------------------------------------------------------------
-N_iter = 5;
-N_gcs_list = [2,5,10,15];
+N_iter = 30;
+N_gcs_list = [2,5,10,15,20,25,30];
 for k = 1:length(N_gcs_list);
     N_gcs = N_gcs_list(k);
     fprintf(['Number of growth conditions: ' num2str(N_gcs) '\n']);
@@ -63,6 +63,15 @@ for k = 1:length(N_gcs_list);
         % Randomly select growth conditions and 2 permutations
         rp = randperm(size(GSMNMData.growthConditions,2),N_gcs);
         randomGrowthConditions = GSMNMData.growthConditions(:,rp);
+
+        % Print for documentation
+        x = ~(randomGrowthConditions==0);
+        z = [];
+        for j=1:N_gcs; z = [z setdiff(seed_rxns_mat.mets(x(:,j)), seed_rxns_mat.mets(x(:,1+mod(j,N_gcs))))]; end
+        fid=fopen(['GapFill_Sequence_' num2str(N_gcs) '_gcs.log'],'w');
+        fprintf(fid, sprintf('%s ', z{:}), '\n');
+        fclose(fid);
+
         [p1,p2] = uniquePerms(N_gcs);
 
         % Sequential gap fill using order from the first random permutation
@@ -94,5 +103,5 @@ for k = 1:length(N_gcs_list);
         sims(i,5) = stseq1;
         sims(i,6) = stseq2;
     end
-    dlmwrite(['Test_gapFillSequence_' num2str(N_gcs) '_gcs.tsv'], sims, '\t');
+    dlmwrite(['GapFill_Sequence_' num2str(N_gcs) '_gcs.tsv'], sims, '\t');
 end
