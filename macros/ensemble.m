@@ -9,7 +9,7 @@
 %** Based on the scripts from Matt Biggs, 2016
 %************************************
 
-ISTEST = 1;
+ISTEST = 0;
 
 % Load universal reaction database and add exchange rxns
 load 2018_seed_rxns
