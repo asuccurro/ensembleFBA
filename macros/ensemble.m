@@ -70,6 +70,8 @@ params.rndSequence = 1;
 params.numModels2gen = 3;
 params.numGrowthConditions = ngc;
 params.numNonGrowthConditions = nngc;
+params.iterationThr = (ngc+nngc)*10;
+
 tic
 [ensemble1] = build_ensemble(seed_rxns_mat,GSMNMData,params);
 stseq1 = toc;

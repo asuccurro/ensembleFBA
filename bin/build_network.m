@@ -1,15 +1,15 @@
 function [modelList] = build_network(universalRxnSet,biologicalData,params)
-%-------------------------------------------------------------------------- 
+%--------------------------------------------------------------------------
 % iterative_builder - Iteratively gap fills a model by first "expanding"
-% (adding reactions) so that it can produce biomass in all the growth 
+% (adding reactions) so that it can produce biomass in all the growth
 % conditions, then by "trimming" (removing reactions) so that it does not
 % grow in the non-growth conditions.
 %
 % Inputs:
 %     universalRxnSet - Matlab structure containing an S matrix and a similar
 %       matrix for exchange rxns (X matrix), a reversability indicator for
-%       all rxns in S (rev), rxn IDs (rxns), rxn names (rxnNames), exchange 
-%       rxn names (Ex_names) metabolite IDs (mets), metabolite names (metNames), 
+%       all rxns in S (rev), rxn IDs (rxns), rxn names (rxnNames), exchange
+%       rxn names (Ex_names) metabolite IDs (mets), metabolite names (metNames),
 %       and metabolite formulas (metFormulas).
 %     biologicalData - Matlab structure with several optional elements:
 %           growthConditions = set of lower bounds corresponding to growth media conditions
@@ -30,7 +30,7 @@ function [modelList] = build_network(universalRxnSet,biologicalData,params)
 %     modelList - a cell array of COBRA-format models (Matlab structs)
 %
 % Written by Matt Biggs, mb3ad@virginia.edu, 2016
-%-------------------------------------------------------------------------- 
+%--------------------------------------------------------------------------
 
 % Unpack parameters
 if isfield(params,'verbose')
@@ -39,10 +39,16 @@ else
     verbose = 0;
 end
 
+if isfield(params,'iterationThr')
+  iterationThr = params.iterationThr;
+else
+  iterationThr = 100;
+end
+
 if isfield(params,'numModels2gen')
     numModels2gen = params.numModels2gen;
     if numModels2gen <= 0
-       numModels2gen = 1; 
+       numModels2gen = 1;
     end
 else
     numModels2gen = 1;
@@ -87,13 +93,13 @@ end
 
 if isfield(biologicalData,'Urxns2set')
     Urxns2set = biologicalData.Urxns2set;
-    
+
     if isfield(biologicalData,'Uset2')
         Uset2 = biologicalData.Uset2;
     else
         error('No reaction state was provided for "Urxns2set".');
     end
-    
+
     if length(find(Urxns2set)) ~= length(find(Uset2))
         error('"Urxns2set" and "Uset2" are different lengths.');
     end
@@ -104,13 +110,13 @@ end
 
 if isfield(biologicalData,'Xrxns2set')
     Xrxns2set = biologicalData.Xrxns2set;
-    
+
     if isfield(biologicalData,'Xset2')
         Xset2 = biologicalData.Xset2;
     else
         error('No reaction state was provided for "Xrxns2set".');
     end
-    
+
     if length(find(Xrxns2set)) ~= length(find(Xset2))
         error('"Xrxns2set" and "Xset2" are different lengths.');
     end
@@ -128,20 +134,20 @@ modelList = cell(numModels2gen,1);
 for i = 1:numModels2gen
     if verbose > 0
         fprintf(['build_network iteration ' num2str(i) '\n']);
-    end   
+    end
 
     iterate = 1;
     currRxnSet = cell(0,1);
     tmpNonGrowthConditions = nonGrowthConditions;
-    
-    % These store a master copy of the user's rxn set list with rxns 
+
+    % These store a master copy of the user's rxn set list with rxns
     % removed that were exlcuded by the trim step
     cpUrxns2set = Urxns2set;
     cpUset2 = Uset2;
     cpXrxns2set = Xrxns2set;
     cpXset2 = Xset2;
-    
-    % These store a working copy of the rxn set list 
+
+    % These store a working copy of the rxn set list
     tmpUrxns2set = Urxns2set;
     tmpUset2 = Uset2;
     tmpXrxns2set = Xrxns2set;
@@ -156,25 +162,25 @@ for i = 1:numModels2gen
     lastRxnDatabase.nonGrowthConditions = nonGrowthConditions;
     numTimesStuck = 0;
     removeSingleTrimmedRxn = 0;
-    
+
     % Keep track of the most consistent model and return it
     mostConsistentMdl = struct;
     mostConsistentDatabase = struct;
     nonConsistWithNGCs = size(nonGrowthConditions,2);
-    handicap = 0;   
+    handicap = 0;
 
     iterationid = 0;
-    while iterate > 0
+    while (iterate > 0) & (iterationid < iterationThr)
 
         iterationid = iterationid + 1;
         if verbose > 0
             fprintf(['*** At iteration ' num2str(iterationid) '\n']);
-        end   
+        end
         %----------------------------------------------------
         % Expand
         %----------------------------------------------------
         if sequential > 0
-            
+
             for j = 1:size(growthConditions,2)
                 % Check if model can already grow in this condition
                 % If not, expand
@@ -185,7 +191,7 @@ for i = 1:numModels2gen
                 if j == 1 || growth < 0.05
                     if verbose > 0
                         fprintf(['*** Cannot grow on growth condition ' num2str(j) '\n']);
-                    end   
+                    end
                     [mdl, rxnDatabase, ~, ~, feasible] = expand(universalRxnSet,...
                                                                 growthConditions(:,j),...
                                                                 tmpNonGrowthConditions,...
@@ -193,7 +199,7 @@ for i = 1:numModels2gen
                                                                 tmpUrxns2set,tmpUset2,...
                                                                 tmpXrxns2set,tmpXset2,...
                                                                 verbose,stochast,rndSeed);
-                    
+
                     if feasible > 0
                         % Update working rxn set list
                         expandedUrxns2set = find( ismember(universalRxnSet.rxns, rxnDatabase.rxns) );
@@ -210,11 +216,11 @@ for i = 1:numModels2gen
                     end
                 end
             end
-            
+
             if feasible > 0
                 rxnDatabase.growthConditions = growthConditions(ismember(universalRxnSet.Ex_names,rxnDatabase.Ex_names),:);
             end
-            
+
         else
             [mdl, rxnDatabase, ~, ~, feasible] = expand(universalRxnSet,...
                                                         growthConditions,...
@@ -224,10 +230,10 @@ for i = 1:numModels2gen
                                                         tmpXrxns2set,tmpXset2,...
                                                         verbose,stochast,rndSeed);
         end
-        
+
         %----------------------------------------------------
         % Trim
-        %----------------------------------------------------    
+        %----------------------------------------------------
         if size(tmpNonGrowthConditions,2) == 0
             % If there are no non-growth conditions, stop
             iterate = 0;
@@ -261,10 +267,10 @@ for i = 1:numModels2gen
                     if growth > 0
                         if verbose > 0
                             fprintf(['*** Can grow on non growth condition ' num2str(j) '\n']);
-                        end   
+                        end
                         didItGrowInNGC = didItGrowInNGC + 1;
                     end
-                    if growth > 0 && sum(~sequentialTrimmedRxns) < 10                    
+                    if growth > 0 && sum(~sequentialTrimmedRxns) < 10
                         rxnsCarryingFlux = find(fluxDist);
                         NGCRxns = find(ismember(rxnDatabase.rxns,mdl.rxns(rxnsCarryingFlux)));
                         uNGCRxns = unique(NGCRxns);
@@ -289,12 +295,13 @@ for i = 1:numModels2gen
                             sequentialTrimmedRxns = fromDecthresh;
                         elseif ~isempty(fromDecthresh)
                             sequentialTrimmedRxns = sequentialTrimmedRxns & fromDecthresh;
-                        end                    
+                        end
                     end
                 end
 
                 % Keep track of most consistent model
-                if (didItGrowInNGC + handicap) < nonConsistWithNGCs || nonConsistWithNGCs == 0
+                %fprintf('nonConsistWithNGCs %d didItGrowInNGC %d handicap %d\n', nonConsistWithNGCs, didItGrowInNGC, handicap);
+                if iterationid==1 || (didItGrowInNGC + handicap) < nonConsistWithNGCs || nonConsistWithNGCs == 0
                     mostConsistentMdl = mdl;
                     mostConsistentDatabase = rxnDatabase;
                     nonConsistWithNGCs = didItGrowInNGC;
@@ -340,7 +347,7 @@ for i = 1:numModels2gen
 
                     numTimesStuck = numTimesStuck + 1;
 
-                    % Revert the master rxn set list to last step before infeasibility            
+                    % Revert the master rxn set list to last step before infeasibility
                     cpUrxns2set = Urxns2set(~ismember(Urxns2set,tmpUexclude));
                     cpUset2 = Uset2(~ismember(Urxns2set,tmpUexclude));
 
@@ -362,7 +369,7 @@ for i = 1:numModels2gen
 
                 numTimesStuck = numTimesStuck + 1;
 
-                % Revert the master rxn set list to last step before infeasibility            
+                % Revert the master rxn set list to last step before infeasibility
                 cpUrxns2set = Urxns2set(~ismember(Urxns2set,tmpUexclude));
                 cpUset2 = Uset2(~ismember(Urxns2set,tmpUexclude));
 
@@ -382,7 +389,7 @@ for i = 1:numModels2gen
                 rp = randperm(L);
                 tmpUexclude = tmpUexclude(rp(1:ceil(L/2)));
 
-                % Revert the master rxn set list to last step before infeasibility            
+                % Revert the master rxn set list to last step before infeasibility
                 cpUrxns2set = Urxns2set(~ismember(Urxns2set,tmpUexclude));
                 cpUset2 = Uset2(~ismember(Urxns2set,tmpUexclude));
 
