@@ -1,5 +1,5 @@
 function [solutions] = ensembleFBA(ensemble,exchangeRxnsIDs,conditions,verbose)
-%-------------------------------------------------------------------------- 
+%--------------------------------------------------------------------------
 % ensembleFBA - Solves a flux balanc analysis (FBA) problem for each member
 % of the ensemble and each set of lower bounds.
 %
@@ -25,7 +25,7 @@ solutions = zeros(size(conditions,2),length(ensemble));
 
 for i = 1:length(ensemble)
     for j = 1:size(conditions,2)
-        [growth,~] = fba_flex(ensemble{i},exchangeRxnsIDs,conditions,verbose);
+        [growth,~] = fba_flex(ensemble{i},exchangeRxnsIDs,conditions(:,j),verbose);
         solutions(j,i) = growth;
     end
 end

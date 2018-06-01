@@ -9,6 +9,8 @@
 %** Based on the scripts from Matt Biggs, 2016
 %************************************
 
+ISTEST = 1;
+
 % Load universal reaction database and add exchange rxns
 load 2018_seed_rxns
 seed_rxns_mat.X = -1*speye(length(seed_rxns_mat.mets));
@@ -42,23 +44,35 @@ params = struct;
 params.sequential = 1;
 params.stochast = 0;
 params.numModels2gen = 1;
-params.verbose = 1;
+params.verbose = 0;
+if ISTEST
+  params.verbose = 1;
+end
 
 full_growthConditions = GSMNMData.growthConditions;
 full_nonGrowthConditions = GSMNMData.nonGrowthConditions;
-GSMNMData.growthConditions = GSMNMData.growthConditions(:,1:3);
-GSMNMData.nonGrowthConditions = GSMNMData.nonGrowthConditions(:,1:3);
+ngc = floor(size(GSMNMData.growthConditions,2)/2);
+nngc = floor(size(GSMNMData.nonGrowthConditions,2)/2);
+if ISTEST
+  ntest=3;
+  GSMNMData.growthConditions = GSMNMData.growthConditions(:,1:ntest);
+  GSMNMData.nonGrowthConditions = GSMNMData.nonGrowthConditions(:,1:ntest);
+  ngc = ntest;
+  nngg = ntest;
+end
 %------------------------------------------------------------------------
 % Build a small ensemble!
 %------------------------------------------------------------------------
-fprintf('Starting build ensemble    (should finish in roughly 50 seconds)\n');
+fprintf('Starting build ensemble \n');
 GSMNMData.rxn_GPR_mapping = GSMNMGenomicData.rxn_GPR_mapping;
 params.fractionUrxns2set = 0.8;
 params.rndSequence = 1;
 params.numModels2gen = 3;
-params.numGrowthConditions = 3; %floor(size(GSMNMData.growthConditions,2)/2);
-params.numNonGrowthConditions = 3; %floor(size(GSMNMData.nonGrowthConditions,2)/2);
+params.numGrowthConditions = ngc;
+params.numNonGrowthConditions = nngc;
+tic
 [ensemble1] = build_ensemble(seed_rxns_mat,GSMNMData,params);
+stseq1 = toc;
 
 if length(ensemble1) == 3
     fprintf('Completed building ensemble  ... success\n');
@@ -73,3 +87,9 @@ fprintf('Starting eFBA (should finish in roughly 1 second)\n');
 [gc_growth] = ensembleFBA(ensemble1,seed_rxns_mat.Ex_names,full_growthConditions,0);
 [ngc_growth] = ensembleFBA(ensemble1,seed_rxns_mat.Ex_names,full_nonGrowthConditions,0);
 fprintf('eFBA run ... success\n');
+
+m = struct;
+m.ensemble = ensemble1;
+m.gc_growth = gc_growth;
+m.ngc_growth = ngc_growth;
+m.solveTime = stseq1;
