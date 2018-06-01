@@ -12,8 +12,10 @@ function [GSMNMData] = getGSMNMGrowthConditions(universalRxnSet, xSourcesTable, 
 %     xSourcesTable - csv file for the growth matrix, containing the field SEEDID of the
 %        Carbon/Nitrogen/Sulfur/Phosphate/X sources on which growth has been tested,
 %        the Growth field (0/1 values) and the Well field relative to Biolog plates (optional)
+%     usePA14BM - 0/1, if True the "standard" biomass composition will be used
 % Inputs loaded from the environment:
 %     biomass - function defining the biomass equation, obtained running the python script getBM.py
+%     biomassFn_PA14 - standard biomass composition that was used in the original publication for all strains
 %     baselinemedia - function defining the baseline composition of the growth media, obtained
 %     running the python script getMedia.py
 % Outputs:
@@ -33,7 +35,7 @@ switch nargin
   case 3
     usePA14BM = usePA14BM;
   otherwise
-    usePA14BM = 0;
+    usePA14BM = 1;
 end
 
 cpdsNotFound = [];
