@@ -44,7 +44,7 @@ params = struct;
 params.sequential = 1;
 params.stochast = 0;
 params.numModels2gen = 1;
-params.verbose = 1;
+params.verbose = 0;
 
 jaccardSim = @(a,b) sum(ismember(a,b))/length(unique([a(:);b(:)]))';
 
