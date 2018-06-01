@@ -226,12 +226,8 @@ for i = 1:numModels2gen
     biologicalData_inner.Xrxns2set = Xrxns2set;
     biologicalData_inner.Xset2 = Xset2;
 
-    params_inner = struct;
-    params_inner.sequential = sequential;
-    params_inner.stochast = stochastic;
-    params_inner.rndSeed = rndSeed;
+    params_inner = params;
     params_inner.numModels2gen = 1;
-    params_inner.verbose = verbose;
 
     % Build network
     tic

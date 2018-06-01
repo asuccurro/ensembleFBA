@@ -53,12 +53,14 @@ full_growthConditions = GSMNMData.growthConditions;
 full_nonGrowthConditions = GSMNMData.nonGrowthConditions;
 ngc = floor(size(GSMNMData.growthConditions,2)/2);
 nngc = floor(size(GSMNMData.nonGrowthConditions,2)/2);
+numMod = 21;
 if ISTEST
   ntest=3;
   GSMNMData.growthConditions = GSMNMData.growthConditions(:,1:ntest);
   GSMNMData.nonGrowthConditions = GSMNMData.nonGrowthConditions(:,1:ntest);
   ngc = ntest;
-  nngg = ntest;
+  nngc = ntest;
+  numMod = ntest;
 end
 %------------------------------------------------------------------------
 % Build a small ensemble!
@@ -67,7 +69,7 @@ fprintf('Starting build ensemble \n');
 GSMNMData.rxn_GPR_mapping = GSMNMGenomicData.rxn_GPR_mapping;
 params.fractionUrxns2set = 0.8;
 params.rndSequence = 1;
-params.numModels2gen = 3;
+params.numModels2gen = numMod;
 params.numGrowthConditions = ngc;
 params.numNonGrowthConditions = nngc;
 params.iterationThr = (ngc+nngc)*10;
@@ -95,3 +97,5 @@ m.ensemble = ensemble1;
 m.gc_growth = gc_growth;
 m.ngc_growth = ngc_growth;
 m.solveTime = stseq1;
+
+save(sprintf('Ensemble_%d_gcs_%d_ngcs.mat', ngc, nngc),'m');
