@@ -37,7 +37,7 @@ for i=1:size(m.ensemble{1}.nonGrowthConditions,2)
 end
 fprintf(fid, [header 'AS\n']);
 for i=1:length(m.ensemble)
-  reconCon = getReconCondition(seed_rxns_mat, m.ensemble{i});
+  reconCon = getReconConditions(seed_rxns_mat, m.ensemble{i});
   fprintf(fid, [num2str(i) ',' sprintf('%s,', reconCon.growth{:}) sprintf('%s,', reconCon.nonGrowth{:}) 'AS\n']);
 end
 fclose(fid);
