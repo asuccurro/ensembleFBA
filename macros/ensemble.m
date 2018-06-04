@@ -100,5 +100,7 @@ m.gc_growth = gc_growth;
 m.ngc_growth = ngc_growth;
 m.reconTime = stseq1;
 m.solveTime = stseq2;
+m.growthCpdList = seed_rxns_mat.mets(GSMNMData.growthXSources);
+m.nonGrowthCpdList = seed_rxns_mat.mets(GSMNMData.nonGrowthXSources);
 
 save(sprintf('ensemble_%d_size_%d_gcs_%d_ngcs.mat', ngc, nngc),'m');
