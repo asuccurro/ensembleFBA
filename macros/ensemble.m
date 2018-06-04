@@ -78,7 +78,7 @@ tic
 [ensemble1] = build_ensemble(seed_rxns_mat,GSMNMData,params);
 stseq1 = toc;
 
-if length(ensemble1) == 3
+if length(ensemble1) == numMod
     fprintf('Completed building ensemble  ... success\n');
 else
     fprintf('Completed building ensemble  ... failure\n');
@@ -103,4 +103,4 @@ m.solveTime = stseq2;
 m.growthCpdList = seed_rxns_mat.mets(GSMNMData.growthXSources);
 m.nonGrowthCpdList = seed_rxns_mat.mets(GSMNMData.nonGrowthXSources);
 
-save(sprintf('ensemble_%d_size_%d_gcs_%d_ngcs.mat', ngc, nngc),'m');
+save(sprintf('ensemble_%d_size_%d_gcs_%d_ngcs.mat', numMod, ngc, nngc),'m');
