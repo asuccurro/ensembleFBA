@@ -8,7 +8,7 @@
 %** Analyse the ensemble for the Root491 draft GSMN
 %************************************
 ensembleFname='Ensemble_5_gcs_5_ngcs';
-outpath='../outputs/ensemble/'
+outpath='../outputs/ensemble/';
 % Load universal reaction database and add exchange rxns
 load 2018_seed_rxns
 seed_rxns_mat.X = -1*speye(length(seed_rxns_mat.mets));
