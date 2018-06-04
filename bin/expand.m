@@ -237,6 +237,7 @@ while iterate > 0
 
         if ~strcmp(char(result.status),'OPTIMAL')
             fprintf(['The LP solution is ' char(result.status) ', this expansion attempt is over\n']);
+            feasible = 0;
             return;
         end
             
