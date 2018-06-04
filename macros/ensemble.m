@@ -3,9 +3,9 @@
 %**  email:a.succurro[AT]gmail.com **
 %**                                **
 %**  created:       2018/05/24     **
-%**  last modified: 2018/05/24     **
+%**  last modified: 2018/06/04     **
 %************************************
-%** Gapfill sequentially the Root491 draft GSMN
+%** Build ensemble for the Root491 draft GSMN
 %** Based on the scripts from Matt Biggs, 2016
 %************************************
 
@@ -87,15 +87,18 @@ end
 %------------------------------------------------------------------------
 % Run eFBA!
 %------------------------------------------------------------------------
+tic
 fprintf('Starting eFBA (should finish in roughly 1 second)\n');
 [gc_growth] = ensembleFBA(ensemble1,seed_rxns_mat.Ex_names,full_growthConditions,0);
 [ngc_growth] = ensembleFBA(ensemble1,seed_rxns_mat.Ex_names,full_nonGrowthConditions,0);
 fprintf('eFBA run ... success\n');
+stseq2 = toc;
 
 m = struct;
 m.ensemble = ensemble1;
 m.gc_growth = gc_growth;
 m.ngc_growth = ngc_growth;
-m.solveTime = stseq1;
+m.reconTime = stseq1;
+m.solveTime = stseq2;
 
-save(sprintf('Ensemble_%d_gcs_%d_ngcs.mat', ngc, nngc),'m');
+save(sprintf('ensemble_%d_size_%d_gcs_%d_ngcs.mat', ngc, nngc),'m');
