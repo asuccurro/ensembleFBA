@@ -5,7 +5,7 @@
 %**  created:       2018/06/04     **
 %**  last modified: 2018/06/04     **
 %************************************
-function [conditionList] = getReconCondition(universalRxnSet, network)
+function [conditionList] = getReconConditions(universalRxnSet, network)
 %--------------------------------------------------------------------------
 %
 % Inputs passed to the function:
