@@ -45,10 +45,11 @@ fclose(fid);
 
 N=uint8(m.gc_growth>0);
 TG=array2table(N,'RowNames',m.growthCpdList);
+writetable(TG,[outpath ensembleFname, '_gc_tab.csv'], 'WriteRowNames',true);
+
 N=uint8(m.ngc_growth>0);
 TNG=array2table(N,'RowNames',m.nonGrowthCpdList);
-writetable(TG,[outpath ensembleFname, '_gc_tab.csv']);
-writetable(TNG,[outpath ensembleFname, '_ngc_tab.csv']);
+writetable(TNG,[outpath ensembleFname, '_ngc_tab.csv'], 'WriteRowNames',true);
 
 dlmwrite([outpath ensembleFname, '_gc_growth.csv'], m.gc_growth>0, ',');
 dlmwrite([outpath ensembleFname, '_ngc_growth.csv'], m.ngc_growth>0, ',');
