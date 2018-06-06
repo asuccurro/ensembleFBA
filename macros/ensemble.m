@@ -53,7 +53,7 @@ full_growthConditions = GSMNMData.growthConditions;
 full_nonGrowthConditions = GSMNMData.nonGrowthConditions;
 ngc = floor(size(GSMNMData.growthConditions,2)/2);
 nngc = floor(size(GSMNMData.nonGrowthConditions,2)/2);
-numMod = 21;
+numMod = 81;
 if ISTEST
   ntest=3;
   GSMNMData.growthConditions = GSMNMData.growthConditions(:,1:ntest);
