@@ -10,6 +10,19 @@
 %************************************
 
 ISTEST = 0;
+% Set parameters
+params = struct;
+params.sequential = 1;
+params.stochast = 1;
+params.numModels2gen = 1;
+params.verbose = 0;
+if ISTEST
+  params.verbose = 1;
+end
+params.fractionUrxns2set = 0.8;
+params.rndSequence = 1;
+
+numMod = 21;
 
 % Load universal reaction database and add exchange rxns
 load 2018_seed_rxns
@@ -34,26 +47,15 @@ Uset2 = ones(size(Urxns2set));
 Xrxns2set = find(sum( abs(seed_rxns_mat.X([GSMNMData.growthXSources(:); GSMNMData.nonGrowthXSources(:)],:)) ,1) > 0);
 Xset2 = ones(size(Xrxns2set));
 
-% Set parameters
 GSMNMData.Urxns2set = Urxns2set;
 GSMNMData.Uset2 = Uset2;
 GSMNMData.Xrxns2set = Xrxns2set;
 GSMNMData.Xset2 = Xset2;
 
-params = struct;
-params.sequential = 1;
-params.stochast = 0;
-params.numModels2gen = 1;
-params.verbose = 0;
-if ISTEST
-  params.verbose = 1;
-end
-
 full_growthConditions = GSMNMData.growthConditions;
 full_nonGrowthConditions = GSMNMData.nonGrowthConditions;
 ngc = floor(size(GSMNMData.growthConditions,2)/2);
 nngc = floor(size(GSMNMData.nonGrowthConditions,2)/2);
-numMod = 81;
 if ISTEST
   ntest=3;
   GSMNMData.growthConditions = GSMNMData.growthConditions(:,1:ntest);
@@ -65,15 +67,13 @@ end
 %------------------------------------------------------------------------
 % Build a small ensemble!
 %------------------------------------------------------------------------
-fprintf('Starting build ensemble \n');
 GSMNMData.rxn_GPR_mapping = GSMNMGenomicData.rxn_GPR_mapping;
-params.fractionUrxns2set = 0.8;
-params.rndSequence = 1;
 params.numModels2gen = numMod;
 params.numGrowthConditions = ngc;
 params.numNonGrowthConditions = nngc;
 params.iterationThr = (ngc+nngc)*10;
 
+fprintf('Starting build ensemble \n');
 tic
 [ensemble1] = build_ensemble(seed_rxns_mat,GSMNMData,params);
 stseq1 = toc;
@@ -103,4 +103,4 @@ m.solveTime = stseq2;
 m.growthCpdList = seed_rxns_mat.mets(GSMNMData.growthXSources);
 m.nonGrowthCpdList = seed_rxns_mat.mets(GSMNMData.nonGrowthXSources);
 
-save(sprintf('ensemble_%d_size_%d_gcs_%d_ngcs.mat', numMod, ngc, nngc),'m');
+save(sprintf('ensemble_%d_size_%d_gcs_%d_ngcs_stochasticWeights_%d.mat', numMod, ngc, nngc, params.stochast),'m');

@@ -27,10 +27,10 @@ function [ensemble] = build_ensemble(universalRxnSet,biologicalData,params)
 %           fractionUrxns2set = The fraction of rxns from Urxns2set which will be used to reconstruct each network (default 0.8)
 %           numGrowthConditions = The number of positive growth conditions to include (if less than N, chooses random subset of size numGrowthConditions; defaults to all of them)
 %           numNonGrowthConditions = The number of non-growth conditions to include (defaults to all of them)
-%           stochast = 1 (default) indicates stochastic weights during the expansion step, 0 indicates equal weights
+%           stochast = 1 indicates stochastic weights during the expansion step, 0 (default) indicates equal weights
 %           rndSeed = Allows the user to manually set the random seed (is set to 0 as default)
 %           numModels2gen = Indicates the number of models to produce (1 is the default)
-%           verbose = 1 (default) indicates verbose output, 0 indicates that messages during runtime are not displayed
+%           verbose = 1 indicates verbose output, 0 (default) indicates that messages during runtime are not displayed
 %
 % Outputs:
 %     modelList - a cell array of COBRA-format models (Matlab structs)

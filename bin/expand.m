@@ -91,6 +91,9 @@ while iterate > 0
     
     % Build objective
     if stochast > 0
+        if verbose > 0
+            fprintf('Adding random weights')
+        end
         objective = [zeros(1,n_UX*n_cond ) 1+rand(1,n_Urxns) ones(1,n_Xrxns)];
     else
         objective = [zeros(1,n_UX*n_cond ) ones(1,n_Urxns) ones(1,n_Xrxns)];
