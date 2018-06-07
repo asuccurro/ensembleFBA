@@ -96,7 +96,7 @@ for i = 1:size(c,2)
   % Actually we do not care about Ex reactions
   N = s_rx;
   T=array2table(N,'RowNames',seed_rxns_mat.rxns);
-  writetable(T,[outpath ensembleFname '_fba_sol' char(seed_rxns_mat.mets(GSMNMData.growthXSources(i))) '.csv'], 'WriteRowNames',true);
+  writetable(T,[outpath ensembleFname '_fba_sol_' char(seed_rxns_mat.mets(GSMNMData.growthXSources(i))) '.csv'], 'WriteRowNames',true);
 
 end
 
