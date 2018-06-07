@@ -108,7 +108,7 @@ end
 xGrowth = xst.SEEDID(xst.Growth > 0, :);
 % Get indexes
 growthXSources = [];
-for k = 1:length(xGrowth);
+for k = 1:size(xGrowth,1);
   x = find(strcmp(universalRxnSet.mets, xGrowth(k,:)));
   if length(x) > 0
     growthXSources = [growthXSources, x];
@@ -122,7 +122,7 @@ end
 xNonGrowth = xst.SEEDID(xst.Growth == 0, :);
 % Get indexes
 nonGrowthXSources = [];
-for k = 1:length(xNonGrowth);
+for k = 1:size(xNonGrowth,1);
   x = find(strcmp(universalRxnSet.mets, xNonGrowth(k,:)));
   if length(x) > 0
     nonGrowthXSources = [nonGrowthXSources, x];
