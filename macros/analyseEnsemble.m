@@ -51,5 +51,61 @@ N=uint8(m.ngc_growth>0);
 TNG=array2table(N,'RowNames',m.nonGrowthCpdList);
 writetable(TNG,[outpath ensembleFname, '_ngc_tab.csv'], 'WriteRowNames',true);
 
-dlmwrite([outpath ensembleFname, '_gc_growth.csv'], m.gc_growth>0, ',');
-dlmwrite([outpath ensembleFname, '_ngc_growth.csv'], m.ngc_growth>0, ',');
+%dlmwrite([outpath ensembleFname, '_gc_growth.csv'], m.gc_growth>0, ',');
+%dlmwrite([outpath ensembleFname, '_ngc_growth.csv'], m.ngc_growth>0, ',');
+
+
+% Check growth / non growth on the conditions that were excluded (proteomics)
+[GSMNMData] = getGSMNMGrowthConditions(seed_rxns_mat, 'forProteomics.csv', 1);
+e = m.ensemble;
+r = seed_rxns_mat.Ex_names;
+c = GSMNMData.growthConditions;
+[gc_growth] = ensembleFBA(e,r,c,0);
+
+
+% for every media condition and for every network store the solution fluxes
+% store in place 1 the reactions, in place 2 the EX_rxns
+solutions = cell(size(c,2),2);
+for i = 1:size(c,2)
+  s_rx = zeros(size(seed_rxns_mat.rxns,1),length(e));
+  s_ex = zeros(size(seed_rxns_mat.Ex_names,1),length(e));
+  for j = 1:length(e)
+    % match model reactions to matrix; distinguish exchange from rxns as are named differently
+    model = e{j};
+    rxnindex = [];
+    exrindex = [];
+    rr = [];
+    ee = [];
+    for z = 1:length(model.rxns)
+      ef = find(strcmp(seed_rxns_mat.Ex_names, model.rxns(z)));
+      rf = find(strcmp(seed_rxns_mat.rxns, model.rxns(z)));
+      if length(rf) > 0
+        rxnindex = [rxnindex rf];
+        rr = [rr z];
+      elseif length(ef)>0
+        exrindex = [exrindex ef];
+        ee = [ee z];
+      else
+        fprintf(['AAAAA\n', char(model.rxns(z))]);
+      end
+    end
+    [growth,x] = fba_flex(model,r,c(:,i),1);
+    s_rx(rxnindex,j) = x(rr);
+    s_ex(exrindex,j) = x(ee);
+  end
+  solutions{i,1} = s_rx;
+  solutions{i,2} = s_ex;
+  % Actually we do not care about Ex reactions
+  N = s_rx;
+  T=array2table(N,'RowNames',seed_rxns_mat.rxns);
+  writetable(T,[outpath ensembleFname '_fba_sol' char(seed_rxns_mat.mets(GSMNMData.growthXSources(i))) '.csv'], 'WriteRowNames',true);
+
+end
+
+% To do in python
+  % 1. Check "enrichment" of reactions in ensemble
+  % 2. Average fluxes and make heat map
+
+
+
+%
