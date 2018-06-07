@@ -85,8 +85,6 @@ for i = 1:size(c,2)
       elseif length(ef)>0
         exrindex = [exrindex ef];
         ee = [ee z];
-      else
-        fprintf(['AAAAA\n', char(model.rxns(z))]);
       end
     end
     [growth,x] = fba_flex(model,r,c(:,i),1);
