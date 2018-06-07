@@ -151,6 +151,8 @@ GSMNMData.growthConditions = growthConditions;
 GSMNMData.nonGrowthXSources = nonGrowthXSources;
 GSMNMData.nonGrowthConditions = nonGrowthConditions;
 
-printGrepLoop(cellstr(cpdsNotFound));
+if length(cpdsNotFound) > 0
+  printGrepLoop(cpdsNotFound);
+end
 
 end
