@@ -245,7 +245,7 @@ for i = 1:numModels2gen
     m.nonGrowthConditions = biologicalData_inner.nonGrowthConditions;
     ensemble{i} = m;
 
-    if verbose > 0
+    if verbose > -1
         fprintf('Network number %d took %d seconds to build.\n',i,time2run);
     end
 end
