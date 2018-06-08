@@ -22,7 +22,7 @@ end
 params.fractionUrxns2set = 0.8;
 params.rndSequence = 1;
 
-numMod = 21;
+numMod = 81;
 
 % Load universal reaction database and add exchange rxns
 load 2018_seed_rxns

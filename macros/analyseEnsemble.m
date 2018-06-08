@@ -8,7 +8,11 @@
 %** Analyse the ensemble for the Root491 draft GSMN
 %************************************
 %ensembleFname='Ensemble_5_gcs_5_ngcs';
-ensembleFname='ensemble_21_size_26_gcs_11_ngcs';
+%ensembleFname='ensemble_21_size_26_gcs_11_ngcs';
+%ensembleFname='ensemble_21_size_26_gcs_11_ngcs_stochasticWeights_0';
+ensembleFname='ensemble_21_size_26_gcs_11_ngcs_stochasticWeights_1';
+%ensembleFname='ensemble_81_size_26_gcs_11_ngcs_stochasticWeights_0';
+%ensembleFname='ensemble_81_size_26_gcs_11_ngcs_stochasticWeights_1';
 outpath='../outputs/ensemble/';
 % Load universal reaction database and add exchange rxns
 load 2018_seed_rxns
