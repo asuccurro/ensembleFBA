@@ -8,8 +8,8 @@
 %** Analyse the ensemble for the Root491 draft GSMN
 %************************************
 %ensembleFname='Ensemble_5_gcs_5_ngcs';
-ensembleFname='ensemble_21_size_26_gcs_11_ngcs';
-%ensembleFname='ensemble_21_size_26_gcs_11_ngcs_stochasticWeights_0';
+%ensembleFname='ensemble_21_size_26_gcs_11_ngcs';
+ensembleFname='ensemble_21_size_26_gcs_11_ngcs_stochasticWeights_0';
 %ensembleFname='ensemble_21_size_26_gcs_11_ngcs_stochasticWeights_1';
 %ensembleFname='ensemble_81_size_26_gcs_11_ngcs_stochasticWeights_0';
 %ensembleFname='ensemble_81_size_26_gcs_11_ngcs_stochasticWeights_1';
@@ -67,6 +67,14 @@ c = GSMNMData.growthConditions;
 [gc_growth] = ensembleFBA(e,r,c,0);
 
 
+N=uint8(gc_growth>0);
+TG=array2table(N,'RowNames',seed_rxns_mat.mets(GSMNMData.growthXSources));
+writetable(TG,[outpath ensembleFname, '_proteomics_growth.csv'], 'WriteRowNames',true);
+
+
+dlmwrite([outpath ensembleFname, '_cond.csv'], c, ',');
+
+
 % for every media condition and for every network store the solution fluxes
 % store in place 1 the reactions, in place 2 the EX_rxns
 solutions = cell(size(c,2),2);
@@ -101,7 +109,7 @@ for i = 1:size(c,2)
   N = s_rx;
   T=array2table(N,'RowNames',seed_rxns_mat.rxns);
   writetable(T,[outpath ensembleFname '_fba_sol_' char(seed_rxns_mat.mets(GSMNMData.growthXSources(i))) '.csv'], 'WriteRowNames',true);
-  dlmwrite([outpath ensembleFname, '_exc_rxns.csv'], s_ex, ',');
+  dlmwrite([outpath ensembleFname, '_exc_rxns_' char(seed_rxns_mat.mets(GSMNMData.growthXSources(i))) '.csv'], s_ex, ',');
 end
 
 % To do in python

@@ -135,12 +135,12 @@ end
 n = length(growthXSources);
 growthConditions = repmat(minimalMediaBase,[1,n]);
 for i = 1:n
-    growthConditions(growthXSources(i),i) = -10;
+    growthConditions(growthXSources(i),i) = -100;
 end
 
 nonGrowthConditions = repmat(minimalMediaBase,[1,length(nonGrowthXSources)]);
 for i = 1:length(nonGrowthXSources)
-    nonGrowthConditions(nonGrowthXSources(i),i) = -10;
+    nonGrowthConditions(nonGrowthXSources(i),i) = -100;
 end
 
 GSMNMData = struct;
