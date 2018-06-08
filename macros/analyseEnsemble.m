@@ -63,7 +63,8 @@ writetable(TNG,[outpath ensembleFname, '_ngc_tab.csv'], 'WriteRowNames',true);
 [GSMNMData] = getGSMNMGrowthConditions(seed_rxns_mat, 'forProteomics.csv', 1);
 e = m.ensemble;
 r = seed_rxns_mat.Ex_names;
-c = GSMNMData.growthConditions;
+%c = GSMNMData.growthConditions;
+c = m.ensemble{1}.growthConditions(:,1:5);
 [gc_growth] = ensembleFBA(e,r,c,0);
 
 

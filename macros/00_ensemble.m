@@ -7,17 +7,18 @@
 %************************************
 % Set parameters
 params = struct;
+
 params.ISTEST = XXXTEST;
 params.stochast = XXXSTOC;
 params.numModels2gen = XXXSIZE;
-params.verbose = 0;
 
 params.fileGrowthConditions='growthMatrix_Root491_XXXCOND.csv';
 params.fileOutPath='../outputs/root491/XXXCOND/'
 
 params.fileAnnotations='rhizobiumRoot491-reactions.tsv';
+
+params.verbose = 0;
 params.sequential = 1;
-params.numModels2gen = 1;
 params.fractionUrxns2set = 0.8;
 params.rndSequence = 1;
 
