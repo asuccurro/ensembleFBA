@@ -8,9 +8,9 @@
 %** Analyse the ensemble for the Root491 draft GSMN
 %************************************
 %ensembleFname='Ensemble_5_gcs_5_ngcs';
-%ensembleFname='ensemble_21_size_26_gcs_11_ngcs';
+ensembleFname='ensemble_21_size_26_gcs_11_ngcs';
 %ensembleFname='ensemble_21_size_26_gcs_11_ngcs_stochasticWeights_0';
-ensembleFname='ensemble_21_size_26_gcs_11_ngcs_stochasticWeights_1';
+%ensembleFname='ensemble_21_size_26_gcs_11_ngcs_stochasticWeights_1';
 %ensembleFname='ensemble_81_size_26_gcs_11_ngcs_stochasticWeights_0';
 %ensembleFname='ensemble_81_size_26_gcs_11_ngcs_stochasticWeights_1';
 outpath='../outputs/ensemble/';
@@ -101,7 +101,7 @@ for i = 1:size(c,2)
   N = s_rx;
   T=array2table(N,'RowNames',seed_rxns_mat.rxns);
   writetable(T,[outpath ensembleFname '_fba_sol_' char(seed_rxns_mat.mets(GSMNMData.growthXSources(i))) '.csv'], 'WriteRowNames',true);
-
+  dlmwrite([outpath ensembleFname, '_exc_rxns.csv'], s_ex, ',');
 end
 
 % To do in python
