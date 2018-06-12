@@ -118,6 +118,20 @@ for k = 1:size(xGrowth,1);
   end
 end
 
+% Get list of compound names to be included but not used for gapfilling
+xNotForGapfill = xst.SEEDID(xst.Growth < 0, :);
+% Get indexes
+notForGapfillXSources = [];
+for k = 1:size(xNotForGapfill,1);
+  x = find(strcmp(universalRxnSet.mets, xNotForGapfill(k,:)));
+  if length(x) > 0
+    notForGapfillXSources = [notForGapfillXSources, x];
+  else
+    fprintf(['AS-WARNING ' char(xNotForGapfill(k,:)) ' (not growth sustaining) not found in the rxn matrix\n']);
+    cpdsNotFound = [cpdsNotFound cellstr(xNotForGapfill(k,:))];
+  end
+end
+
 % Get list of compound names not sustaining growth
 xNonGrowth = xst.SEEDID(xst.Growth == 0, :);
 % Get indexes
@@ -143,6 +157,11 @@ for i = 1:length(nonGrowthXSources)
     nonGrowthConditions(nonGrowthXSources(i),i) = -100;
 end
 
+notForGapfillConditions = repmat(minimalMediaBase,[1,length(notForGapfillXSources)]);
+for i = 1:length(notForGapfillXSources)
+    notForGapfillConditions(notForGapfillXSources(i),i) = -100;
+end
+
 GSMNMData = struct;
 GSMNMData.biomassFn = biomassFn;
 GSMNMData.minimalMediaBase = minimalMediaBase;
@@ -150,6 +169,8 @@ GSMNMData.growthXSources = growthXSources;
 GSMNMData.growthConditions = growthConditions;
 GSMNMData.nonGrowthXSources = nonGrowthXSources;
 GSMNMData.nonGrowthConditions = nonGrowthConditions;
+GSMNMData.notForGapfillXSources = notForGapfillXSources;
+GSMNMData.notForGapfillConditions = notForGapfillConditions;
 
 if length(cpdsNotFound) > 0
   printGrepLoop(cpdsNotFound);

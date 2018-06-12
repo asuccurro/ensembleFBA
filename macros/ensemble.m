@@ -9,7 +9,7 @@
 %** Based on the scripts from Matt Biggs, 2016
 %************************************
 
-ISTEST = 0;
+ISTEST = 1;
 % Set parameters
 params = struct;
 params.sequential = 1;
@@ -22,7 +22,7 @@ end
 params.fractionUrxns2set = 0.8;
 params.rndSequence = 1;
 
-numMod = 81;
+numMod = 21;
 
 % Load universal reaction database and add exchange rxns
 load 2018_seed_rxns
@@ -44,7 +44,7 @@ Uset2 = ones(size(Urxns2set));
 
 % Include exchange reactions for all non-growth conditions, just so that
 % it's the network itself--not the lack of exchange reactions--that prevents growth
-Xrxns2set = find(sum( abs(seed_rxns_mat.X([GSMNMData.growthXSources(:); GSMNMData.nonGrowthXSources(:)],:)) ,1) > 0);
+Xrxns2set = find(sum( abs(seed_rxns_mat.X([GSMNMData.growthXSources(:); GSMNMData.nonGrowthXSources(:); GSMNMData.notForGapfillXSources(:)],:)) ,1) > 0);
 Xset2 = ones(size(Xrxns2set));
 
 GSMNMData.Urxns2set = Urxns2set;
@@ -91,6 +91,7 @@ tic
 fprintf('Starting eFBA (should finish in roughly 1 second)\n');
 [gc_growth] = ensembleFBA(ensemble1,seed_rxns_mat.Ex_names,full_growthConditions,0);
 [ngc_growth] = ensembleFBA(ensemble1,seed_rxns_mat.Ex_names,full_nonGrowthConditions,0);
+[xt_growth] = ensembleFBA(ensemble1,seed_rxns_mat.Ex_names,GSMNMData.notForGapfillConditions,0);
 fprintf('eFBA run ... success\n');
 stseq2 = toc;
 
@@ -102,5 +103,6 @@ m.reconTime = stseq1;
 m.solveTime = stseq2;
 m.growthCpdList = seed_rxns_mat.mets(GSMNMData.growthXSources);
 m.nonGrowthCpdList = seed_rxns_mat.mets(GSMNMData.nonGrowthXSources);
+m.notForGapfillCpdList = seed_rxns_mat.mets(GSMNMData.notForGapfillXSources);
 
 save(sprintf('ensemble_%d_size_%d_gcs_%d_ngcs_stochasticWeights_%d.mat', numMod, ngc, nngc, params.stochast),'m');
