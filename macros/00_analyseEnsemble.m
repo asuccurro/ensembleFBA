@@ -53,11 +53,15 @@ writetable(TNG,[outpath ensembleFname, '_ngc_tab.csv'], 'WriteRowNames',true);
 %dlmwrite([outpath ensembleFname, '_gc_growth.csv'], m.gc_growth>0, ',');
 %dlmwrite([outpath ensembleFname, '_ngc_growth.csv'], m.ngc_growth>0, ',');
 
-N=uint8(xt_growth>0);
+N=uint8(m.xt_growth>0);
 TG=array2table(N,'RowNames',m.notForGapfillCpdList);
 writetable(TG,[outpath ensembleFname, '_proteomics_growth.csv'], 'WriteRowNames',true);
 
-dlmwrite([outpath ensembleFname, '_cond.csv'], c, ',');
+%dlmwrite([outpath ensembleFname, '_cond.csv'], c, ',');
+
+e = m.ensemble;
+r = seed_rxns_mat.Ex_names;
+c = m.ensemble{1}.notForGapfillConditions;
 
 % for every media condition and for every network store the solution fluxes
 % store in place 1 the reactions, in place 2 the EX_rxns
