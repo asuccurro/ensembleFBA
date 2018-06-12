@@ -243,6 +243,9 @@ for i = 1:numModels2gen
     m.time2run = time2run;
     m.growthConditions = biologicalData_inner.growthConditions;
     m.nonGrowthConditions = biologicalData_inner.nonGrowthConditions;
+    if isfield(biologicalData_inner,'notForGapfillConditions')
+      m.notForGapfillConditions = biologicalData_inner.notForGapfillConditions;
+    end
     ensemble{i} = m;
 
     if verbose > -1

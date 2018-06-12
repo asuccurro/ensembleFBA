@@ -53,24 +53,11 @@ writetable(TNG,[outpath ensembleFname, '_ngc_tab.csv'], 'WriteRowNames',true);
 %dlmwrite([outpath ensembleFname, '_gc_growth.csv'], m.gc_growth>0, ',');
 %dlmwrite([outpath ensembleFname, '_ngc_growth.csv'], m.ngc_growth>0, ',');
 
-
-% Check growth / non growth on the conditions that were excluded (proteomics)
-[GSMNMData] = getGSMNMGrowthConditions(seed_rxns_mat, 'forProteomics.csv', 1);
-e = m.ensemble;
-r = seed_rxns_mat.Ex_names;
-c = GSMNMData.growthConditions;
-% hack for test purposes:
-%c = m.ensemble{1}.growthConditions(:,1:5);
-[gc_growth] = ensembleFBA(e,r,c,0);
-
-
-N=uint8(gc_growth>0);
-TG=array2table(N,'RowNames',seed_rxns_mat.mets(GSMNMData.growthXSources));
+N=uint8(xt_growth>0);
+TG=array2table(N,'RowNames',m.notForGapfillCpdList);
 writetable(TG,[outpath ensembleFname, '_proteomics_growth.csv'], 'WriteRowNames',true);
 
-
 dlmwrite([outpath ensembleFname, '_cond.csv'], c, ',');
-
 
 % for every media condition and for every network store the solution fluxes
 % store in place 1 the reactions, in place 2 the EX_rxns
@@ -105,8 +92,8 @@ for i = 1:size(c,2)
   % Actually we do not care about Ex reactions
   N = s_rx;
   T=array2table(N,'RowNames',seed_rxns_mat.rxns);
-  writetable(T,[outpath ensembleFname '_fba_sol_' char(seed_rxns_mat.mets(GSMNMData.growthXSources(i))) '.csv'], 'WriteRowNames',true);
-  dlmwrite([outpath ensembleFname, '_exc_rxns_' char(seed_rxns_mat.mets(GSMNMData.growthXSources(i))) '.csv'], s_ex, ',');
+  writetable(T,[outpath ensembleFname '_fba_sol_' char(m.notForGapfillCpdList(i)) '.csv'], 'WriteRowNames',true);
+  dlmwrite([outpath ensembleFname, '_exc_rxns_' char(m.notForGapfillCpdList(i)) '.csv'], s_ex, ',');
 end
 
 % To do in python

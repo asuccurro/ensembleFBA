@@ -13,7 +13,7 @@ params.stochast = XXXSTOC;
 params.numModels2gen = XXXSIZE;
 
 params.fileGrowthConditions='growthMatrix_Root491_XXXCOND.csv';
-params.fileOutPath='../outputs/root491/XXXCOND/'
+params.fileOutPath='../outputs/root491/XXXCOND/';
 
 params.fileAnnotations='rhizobiumRoot491-reactions.tsv';
 
