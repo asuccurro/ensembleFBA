@@ -106,4 +106,4 @@ m.growthCpdList = seed_rxns_mat.mets(GSMNMData.growthXSources);
 m.nonGrowthCpdList = seed_rxns_mat.mets(GSMNMData.nonGrowthXSources);
 m.notForGapfillCpdList = seed_rxns_mat.mets(GSMNMData.notForGapfillXSources);
 
-save(sprintf('ensemble_%d_size_%d_gcs_%d_ngcs_stochasticWeights_%d.mat', numMod, ngc, nngc, params.stochast),'m');
+save(sprintf('../outputs/root491/hs/ensemble_%d_size_%d_gcs_%d_ngcs_stochasticWeights_%d.mat', numMod, ngc, nngc, params.stochast),'m');
