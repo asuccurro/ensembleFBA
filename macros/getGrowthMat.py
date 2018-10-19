@@ -15,20 +15,51 @@ import pandas
 def main():
     args = options()
     verbose = args.verbose
-    wte = args.exclude.split(' ')
-    df = pandas.read_csv(args.biolog, sep='\t')
-    print(df.shape)
-    dfe = df[df['Well'].isin(wte)]
-    print('Removing the following wells from growth matrix:', dfe)
-    df = df[~df['Well'].isin(wte)]
-    print(df.shape)
-    gw = list(df.loc[df[args.id]>0, 'Well'])
-    ngw = list(df.loc[df[args.id]==0, 'Well'])
-    odf = pandas.read_csv(args.compounds, sep='\t')
+    excl = args.exclude
+    selc = args.select
+    classid = args.classid
+    orgid = args.id
+    outpath = args.outpath
+    biolog = args.biolog
+    compounds = args.compounds
+
+    idf, df = getGrowthMatrix(biolog, compounds, outpath, orgid, classid, excl, selc, verbose)
+    return idf, df
+
+def getGrowthMatrix(biolog, compounds, outpath, orgid, classid, excl, selc, verbose=False):
+
+    wte = excl.split(' ')
+    wts = selc.split(' ')
+    
+    oname = ''
+    if len(wte[0]) > 0:
+        oname = '_exclude_%s' % ('-'.join(wte))
+    if len(wts[0]) > 0:
+        oname = '_select_%s' % ('-'.join(wts))
+    idf = pandas.read_csv(biolog, sep='\t')
+    if classid != 'NA':
+        if verbose:
+            print('Selecting all ', classid, ' for growth matrix')
+        wts = list(idf[idf["Class"] == classid]["Well"])
+        oname = oname+'_select_%s' % (classid.replace(' ', '-'))
+    df  = idf[~idf['Well'].isin(wte)]
+    if verbose:
+        print(idf.shape)
+        print('Removing the following wells from growth matrix:', idf[idf['Well'].isin(wte)])
+        print(df.shape)
+    if len(wts[0]) > 0:
+        df = df[df['Well'].isin(wts)]
+        if verbose:
+            print('Selecting the following wells from growth matrix:', idf[idf['Well'].isin(wts)])
+            print(df.shape)
+    gw = list(df.loc[df[orgid]>0, 'Well'])
+    ngw = list(df.loc[df[orgid]==0, 'Well'])
+    odf = pandas.read_csv(compounds, sep='\t')
     odf['Growth'] = -1
     odf.loc[odf['Well'].isin(gw), 'Growth'] = 1
     odf.loc[odf['Well'].isin(ngw), 'Growth'] = 0
-    odf.to_csv(args.outpath+'growthMatrix_'+args.id+'.csv', index=False)
+    odf.to_csv(outpath+'growthMatrix_'+orgid+oname+'.csv', index=False)
+    return idf, df
 
 def options():
     '''define here in-line arguments'''
@@ -39,6 +70,8 @@ def options():
     parser.add_argument('-o', '--outpath', help='path for output file', default='../rhizobiumRoot491/data/')
     parser.add_argument('-i', '--id', help='id for the organism', default='Root491')
     parser.add_argument('-e', '--exclude', help='wells to be excluded from the growth matrix (to be used for validation)', default='A2 A5 A12 B6 B10')
+    parser.add_argument('-s', '--select', help='wells to be selected for the growth matrix', default='')
+    parser.add_argument('-l', '--classid', help='class of wells to be selected for the growth matrix', default='NA')
     args = parser.parse_args()
     if args.verbose:
         print("verbosity turned on")

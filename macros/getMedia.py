@@ -52,6 +52,7 @@ def main():
                         continue
                     with open(args.outpath+x[0]+'_'+n+'.tsv','w') as outfile:
                         outfile.write('ID\tminFlux\tmaxFlux\tconcentration\n')
+                        mymedia = c
                         for cpd in c:
                             outfile.write(cpd.replace(';','\t')+'\n')
                             media[x[0]].append(cpd.split(';')[0])
@@ -66,6 +67,12 @@ def main():
     nfw=[]
     #subs = map(lambda x: x[x.index('cpd'):x.index('cpd')+8], s)
     #prods = map(lambda x: x[x.index('cpd'):x.index('cpd')+8], p)
+
+
+
+    baselinemedia = set(media[wells[0]]).intersection(set(media[wells[1]]))
+
+    
     print('X The following metabolites were not found in the DB (missing ID?)')
     with open(args.biolog,'r') as infile:
         for line in infile:
@@ -75,6 +82,34 @@ def main():
             if l[0] not in wells:
                 print('\t',l[0], l[1])
                 nfw.append(l[0])
+                if args.manualfix:
+                    sbp = subprocess.Popen(("grep", "-i", "%s"%l[0], "%s"%args.manuallist), stdout = subprocess.PIPE)
+                    match = (sbp.communicate()[0]).decode('ascii')
+                    if not match:
+                        print('?', l[1], ' was also not manually matched')
+                    else:
+                        mm = match.split('\n')
+                        for m in range(len(mm)-1):
+                            x = mm[m].split('\t')
+                            if l[0] != x[0]:
+                                continue
+                            #print(l[0], l[1], x[0])
+                            with open(args.outpath+l[0]+'_'+l[1]+'.tsv','w') as outfile:
+                                outfile.write('ID\tminFlux\tmaxFlux\tconcentration\n')
+                                #print(mymedia)
+                                #print(baselinemedia)
+                                for cpd in mymedia:
+                                    cpdl = cpd.split(';')
+                                    if cpdl[0] in baselinemedia:
+                                        outfile.write(cpd.replace(';','\t')+'\n')
+                                        media[x[0]].append(cpdl[0])
+                                    else:
+                                        media[x[0]].append(x[1])
+                                        outfile.write(x[1]+'\t-100\t5\t0.001\n')
+                            wells.append(x[0])
+                            print('\t\tFixed manually')
+
+
     aw = nfw+wells
     aw.sort()
     nfw.sort()
@@ -85,7 +120,6 @@ def main():
     #    outfile.write('p = {\''+'\', \''.join(prods)+'\'};\n')
     #    outfile.write('end')
 
-    baselinemedia = set(media[wells[0]]).intersection(set(media[wells[1]]))
     print('> Baseline media composition:')
     for m in baselinemedia:
         sbp = subprocess.Popen(("grep", "-i", "%s"%m, "%s"%args.db), stdout = subprocess.PIPE)
@@ -110,6 +144,8 @@ def options():
     '''define here in-line arguments'''
     parser = argparse.ArgumentParser(description='Parsing options')
     parser.add_argument('-V', '--verbose', help='increase output verbosity', action='store_true')
+    parser.add_argument('-F', '--manualfix', help='fix not found compounds with manual file', action='store_true')
+    parser.add_argument('-f', '--manuallist', help='tsv file with manual compound ref', default='../data/ModelSEEDdata/biolog_nitrogen_fix.tsv')
     parser.add_argument('-m', '--mediafile', help='tsv file with media definition', default='../data/ModelSEEDdata/media_list_with_meta.tsv')
     parser.add_argument('-c', '--compoundname', help='name of source compound', default='Nitrogen')
     parser.add_argument('-b', '--biolog', help='name of biolog tsv file', default='../rhizobiumRoot491/data/biolog_summary.tsv')
