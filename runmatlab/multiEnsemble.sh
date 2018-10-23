@@ -1,8 +1,12 @@
-for c in exc5N inc5N; do
+for c in exc5N; do
+#for c in exc5N inc5N; do
 	mkdir -p ../outputs/root491/${c}
-	for s in 0 1; do
-		for n in 21 81; do
-			for t in 0; do
+	for s in 1; do
+	#for s in 0 1; do
+		for n in 21; do
+		#for n in 21 81; do
+			for t in 1; do
+			#for t in 0; do
 				fnm=ensemble_${c}_${s}_${n}_${t}
 				cp ../macros/00_ensemble.m ${fnm}.m
 				sed -i "s/XXXTEST/${t}/g" ${fnm}.m

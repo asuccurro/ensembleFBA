@@ -16,6 +16,14 @@ if params.ISTEST
   params.verbose = 1;
 end
 
+if ~exist('params.numGC','var')
+    params.numGC = -1;
+end
+
+if ~exist('params.numNGC','var')
+    params.numNGC = -1;
+end
+
 % Get the GSMNM data formatted with work with the SEED database
 %       GSMNMData.biomassFn,growthXSources,growthConditions,nonGrowthXSources,nonGrowthConditions
 [GSMNMData] = getGSMNMGrowthConditions(seed_rxns_mat, params.fileGrowthConditions, 1);
@@ -41,8 +49,17 @@ GSMNMData.Xset2 = Xset2;
 
 full_growthConditions = GSMNMData.growthConditions;
 full_nonGrowthConditions = GSMNMData.nonGrowthConditions;
-ngc = floor(size(GSMNMData.growthConditions,2)/2);
-nngc = floor(size(GSMNMData.nonGrowthConditions,2)/2);
+
+ngc = params.numGC;
+if ngc < 0
+    ngc = floor(size(GSMNMData.growthConditions,2)/2);
+end
+
+nngc = params.numNGC;
+if nngc < 0
+    nngc = floor(size(GSMNMData.nonGrowthConditions,2)/2);
+end
+
 if params.ISTEST
   ntest=3;
   GSMNMData.growthConditions = GSMNMData.growthConditions(:,1:ntest);
