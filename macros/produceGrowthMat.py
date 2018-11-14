@@ -11,4 +11,5 @@ for orgid in ['Root9', 'Root491', 'Root66D1']:
         getGrowthMat.getGrowthMatrix(biolog, compounds, outpath, orgid, classid, excl, selc)
     getGrowthMat.getGrowthMatrix(biolog, compounds, outpath, orgid, 'NA', 'A2 A5 A12 B6 B10', selc)
     getGrowthMat.getGrowthMatrix(biolog, compounds, outpath, orgid, 'NA', excl, selc)
+    getGrowthMat.getGrowthMatrix(biolog, compounds, outpath, orgid, 'NA', 'C4 C9 D2 D6 D7 D10 E6 E7 E10 G4 G6 G7 G10 G12', selc)
 
