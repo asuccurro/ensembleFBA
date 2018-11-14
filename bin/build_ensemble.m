@@ -79,7 +79,12 @@ end
 if isfield(params,'rndSeed')
     rndSeed = params.rndSeed;
 else
-    rndSeed = now;
+    rng('shuffle');
+    randtmp = rng('shuffle');
+    rndSeed = randtmp.Seed;
+    if verbose > 0
+        fprintf('Shuffled rndSeed is %d \n',rndSeed);
+    end
 end
 
 if isfield(params,'sequential')
@@ -116,8 +121,8 @@ if isfield(params,'numNonGrowthConditions')
     numNonGrowthConditions = params.numNonGrowthConditions;
     if numNonGrowthConditions > size(nonGrowthConditions,2)
         numNonGrowthConditions = size(nonGrowthConditions,2);
-    elseif numGrowthConditions < 0
-        numGrowthConditions = size(nonGrowthConditions,2);
+    elseif numNonGrowthConditions < 0
+        numNonGrowthConditions = size(nonGrowthConditions,2);
     end
 else
     numNonGrowthConditions = size(nonGrowthConditions,2);
@@ -192,7 +197,12 @@ if verbose > 0
     fprintf('Starting to build ensemble.\n');
 end
 
-for i = 1:numModels2gen
+i = 0;
+while (i < numModels2gen)
+    i = i+1;
+    if verbose > 0
+        fprintf(['build_ensemble network ' num2str(i) ' of ' num2str(numModels2gen) '\n']);
+    end
     % Generate Random subset of gene annotations
     if fractionUrxns2set < 1
         p1 = randperm(length(Urxns2set));
@@ -216,6 +226,12 @@ for i = 1:numModels2gen
         tmp_nonGrowthConditions = nonGrowthConditions;
     end
 
+    if verbose > 0
+        p1
+        p2
+        %fprintf('Growth conditions: '); fprintf('%s ', cellstr(tmp_growthConditions){:}); fprintf('\n');
+        %fprintf('Non-growth conditions: '); fprintf('%s ', tmp_nonGrowthConditions{:}); fprintf('\n');
+    end
     % Set parameters
     biologicalData_inner = struct;
     biologicalData_inner.growthConditions = tmp_growthConditions;
@@ -231,25 +247,31 @@ for i = 1:numModels2gen
 
     % Build network
     tic
-    [modelList] = build_network(universalRxnSet,biologicalData_inner,params_inner);
+    [modelList, buildingSucceeded] = build_network(universalRxnSet,biologicalData_inner,params_inner);
     time2run = toc;
 
-    % Add GPRs
-    if isfield(rxn_GPR_mapping,'rxns')
-        [modelList] = addGPRs(modelList,rxn_GPR_mapping);
-    end
+    if buildingSucceeded
+        
+        % Add GPRs
+        if isfield(rxn_GPR_mapping,'rxns')
+            [modelList] = addGPRs(modelList,rxn_GPR_mapping);
+        end
 
-    m = modelList{1};
-    m.time2run = time2run;
-    m.growthConditions = biologicalData_inner.growthConditions;
-    m.nonGrowthConditions = biologicalData_inner.nonGrowthConditions;
-    if isfield(biologicalData,'notForGapfillConditions')
-      m.notForGapfillConditions = biologicalData.notForGapfillConditions;
-    end
-    ensemble{i} = m;
+        m = modelList{1};
+        m.time2run = time2run;
+        m.growthConditions = biologicalData_inner.growthConditions;
+        m.nonGrowthConditions = biologicalData_inner.nonGrowthConditions;
+        if isfield(biologicalData,'notForGapfillConditions')
+            m.notForGapfillConditions = biologicalData.notForGapfillConditions;
+        end
+        ensemble{i} = m;
 
-    if verbose > -1
-        fprintf('Network number %d took %d seconds to build.\n',i,time2run);
+        if verbose > -1
+            fprintf('Network number %d took %d seconds to build.\n',i,time2run);
+        end
+    else
+        fprintf('Network number %d failed to build, setting i to %d and retry.\n',i,i-1);
+        i = i-1;
     end
 end
 

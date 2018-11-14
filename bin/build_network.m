@@ -1,4 +1,4 @@
-function [modelList] = build_network(universalRxnSet,biologicalData,params)
+function [modelList, buildingSucceeded] = build_network(universalRxnSet,biologicalData,params)
 %--------------------------------------------------------------------------
 % iterative_builder - Iteratively gap fills a model by first "expanding"
 % (adding reactions) so that it can produce biomass in all the growth
@@ -63,7 +63,12 @@ end
 if isfield(params,'rndSeed')
     rndSeed = params.rndSeed;
 else
-    rndSeed = now;
+    rng('shuffle');
+    randtmp = rng('shuffle');
+    rndSeed = randtmp.Seed;
+    if verbose > 0
+        fprintf('Shuffled rndSeed is %d \n',rndSeed);
+    end
 end
 
 if isfield(params,'sequential')
@@ -133,9 +138,9 @@ jaccardSim = @(a,b) sum(ismember(a,b))/length(unique([a(:);b(:)]))';
 modelList = cell(numModels2gen,1);
 for i = 1:numModels2gen
     if verbose > 0
-        fprintf(['build_network iteration ' num2str(i) '\n']);
+        fprintf(['build_network iteration ' num2str(i) ' of ' num2str(numModels2gen) '\n']);
     end
-
+    buildingSucceeded = 1;
     iterate = 1;
     currRxnSet = cell(0,1);
     tmpNonGrowthConditions = nonGrowthConditions;
@@ -186,11 +191,14 @@ for i = 1:numModels2gen
                 % If not, expand
                 if j > 1
                     [growth,~] = fba_flex(mdl,universalRxnSet.Ex_names,growthConditions(:,j),verbose);
+                else
+                    % need to enter next condition for j == 1
+                    growth = -1;
                 end
 
-                if j == 1 || growth < 0.05
+                if growth < 0.05
                     if verbose > 0
-                        fprintf(['*** Cannot grow on growth condition ' num2str(j) '\n']);
+                        fprintf(['*** Cannot grow on growth condition ' num2str(j) ', growth ' num2str(growth) '\n']);
                     end
                     [mdl, rxnDatabase, ~, ~, feasible] = expand(universalRxnSet,...
                                                                 growthConditions(:,j),...
@@ -212,6 +220,9 @@ for i = 1:numModels2gen
                         tmpXrxns2set = [expandedXrxns2set(:); cpXrxns2set(:)];
                         tmpXset2 = [expandedXset2(:); cpXset2(:)];
                     else
+                        if verbose > 0
+                            fprintf(['\n Expansion not feasible for condition number ' num2str(j) '\n']);
+                        end
                         break;
                     end
                 end
@@ -222,6 +233,7 @@ for i = 1:numModels2gen
             end
 
         else
+            % case sequential == 0
             [mdl, rxnDatabase, ~, ~, feasible] = expand(universalRxnSet,...
                                                         growthConditions,...
                                                         tmpNonGrowthConditions,...
@@ -229,6 +241,7 @@ for i = 1:numModels2gen
                                                         tmpUrxns2set,tmpUset2,...
                                                         tmpXrxns2set,tmpXset2,...
                                                         verbose,stochast,rndSeed);
+
         end
 
         %----------------------------------------------------
@@ -240,9 +253,14 @@ for i = 1:numModels2gen
             mostConsistentMdl = mdl;
             mostConsistentDatabase = rxnDatabase;
         else
-            if feasible > 0 && removeSingleTrimmedRxn == 0
-                % Identify the reactions which are used in all growth
-                % conditions
+            if size(fields(rxnDatabase),1) == 0
+                buildingSucceeded = 0;
+                iterate = 0;
+                if verbose > 1
+                    fprintf(['\nFailed to obtain a rxnDatabase, exit and and retry \n']);
+                end
+            elseif feasible > 0 && removeSingleTrimmedRxn == 0
+                % Identify the reactions which are used in all growth conditions
                 growthRxnsList = cell(size(growthConditions,2),1);
                 for j = 1:size(growthConditions,2)
                     [~,fluxDist] = fba_flex(mdl,universalRxnSet.Ex_names,growthConditions(:,j),verbose);
@@ -358,7 +376,7 @@ for i = 1:numModels2gen
                     tmpXset2 = Xset2;
 
                     if verbose > 0
-                        fprintf('\nRemoved random trimmed reactions.\n\n')
+                        fprintf('\nRemoved random trimmed reactions.\n\n');
                     end
                 end
             elseif numTimesStuck < 20
@@ -380,7 +398,7 @@ for i = 1:numModels2gen
                 tmpXset2 = Xset2;
 
                 if verbose > 0
-                    fprintf('\nRemoved half of trimmed reactions.\n\n')
+                    fprintf('\nRemoved half of trimmed reactions.\n\n');
                 end
 
             elseif size(tmpNonGrowthConditions,2) > 0
@@ -399,6 +417,9 @@ for i = 1:numModels2gen
                 tmpXrxns2set = Xrxns2set;
                 tmpXset2 = Xset2;
 
+                if size(fields(mostConsistentDatabase),1) == 0
+                    fprintf(['ERROR, should have a rxnDatabase\n']);
+                end
                 % Trim inconsistent non-growth conditions
                 [mdl2, ~, fromNGCthresh] = trim_ngc(mostConsistentDatabase, ...
                                                     mostConsistentDatabase.growthConditions,...
@@ -422,14 +443,17 @@ for i = 1:numModels2gen
 
                 if verbose > 0
                     numRemoved = length(fromNGCthresh) - sum(fromNGCthresh);
-                    fprintf(['\nRemoved ' num2str(numRemoved) ' inconsistent growth condition(s).\n\n'])
+                    fprintf(['\nRemoved ' num2str(numRemoved) ' inconsistent growth condition(s).\n\n']);
                 end
-
             end
         end
     end
 
-    modelList{i,1} = mostConsistentMdl;
+    if buildingSucceeded > 0
+        modelList{i,1} = mostConsistentMdl;
+    else
+        fprintf(['*buildingSucceeded False, network ' num2str(i) ' not stored*\n']);
+    end
 end
 
 end

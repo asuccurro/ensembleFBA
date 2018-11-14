@@ -16,11 +16,11 @@ if params.ISTEST
   params.verbose = 1;
 end
 
-if ~exist('params.numGC','var')
+if ~isfield(params,'numGC')
     params.numGC = -1;
 end
 
-if ~exist('params.numNGC','var')
+if ~isfield(params,'numNGC')
     params.numNGC = -1;
 end
 
@@ -68,13 +68,14 @@ if params.ISTEST
   nngc = ntest;
   params.numModels2gen = ntest;
 end
+
 %------------------------------------------------------------------------
 % Build a small ensemble!
 %------------------------------------------------------------------------
 GSMNMData.rxn_GPR_mapping = GSMNMGenomicData.rxn_GPR_mapping;
 params.numGrowthConditions = ngc;
 params.numNonGrowthConditions = nngc;
-params.iterationThr = (ngc+nngc)*10;
+params.iterationThr = (ngc+nngc)*2;
 
 fprintf('Starting build ensemble \n');
 tic
