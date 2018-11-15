@@ -12,6 +12,8 @@ import subprocess
 import collections
 import pandas
 
+shortened = {'C4-C9-D2-D6-D7-D10-E6-E7-E10-G4-G6-G7-G10-G12': 'not_found_and_G12'}
+
 def main():
     args = options()
     verbose = args.verbose
@@ -33,7 +35,15 @@ def getGrowthMatrix(biolog, compounds, outpath, orgid, classid, excl, selc, verb
     
     oname = ''
     if len(wte[0]) > 0:
-        oname = '_exclude_%s' % ('-'.join(wte))
+        estr = '-'.join(wte)
+        if len(estr) > 30:
+            if estr in shortened:
+                oname = '_exclude_%s' % shortened[estr]
+            else:
+                print('ACHTUNG! String %s is too long, MATLAB will complain' % estr)
+                oname = '_exclude_XYZ'
+        else:
+            oname = '_exclude_%s' % estr
     if len(wts[0]) > 0:
         oname = '_select_%s' % ('-'.join(wts))
     idf = pandas.read_csv(biolog, sep='\t')

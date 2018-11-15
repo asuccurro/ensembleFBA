@@ -127,7 +127,7 @@ for k = 1:size(xNotForGapfill,1);
   if length(x) > 0
     notForGapfillXSources = [notForGapfillXSources, x];
   else
-    fprintf(['AS-WARNING ' char(xNotForGapfill(k,:)) ' (not growth sustaining) not found in the rxn matrix\n']);
+    fprintf(['AS-WARNING ' char(xNotForGapfill(k,:)) ' (not for gapfill) not found in the rxn matrix\n']);
     cpdsNotFound = [cpdsNotFound cellstr(xNotForGapfill(k,:))];
   end
 end
