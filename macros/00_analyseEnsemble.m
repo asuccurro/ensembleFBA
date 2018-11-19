@@ -15,7 +15,7 @@ seed_rxns_mat.X = -1*speye(length(seed_rxns_mat.mets));
 seed_rxns_mat.Ex_names = strcat('Ex_',seed_rxns_mat.mets);
 
 % Load the struct containing the ensemble
-load(ensembleFname)
+load(fullfile('..', 'outputs', 'XXXDNAME', ensembleFname))
 % m =
 %
 %   struct with fields:
