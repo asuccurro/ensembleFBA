@@ -52,10 +52,10 @@ matlab -nodesktop -nosplash -nodisplay  -r "testMPIRoot('Root66D1'); quit"
 The above setup are enough to re-run the simulations of [Jacoby, Succurro, Kopriva 2018](MANUSCRIPT).
 The additional instructions [at the end of the wiki](#instructions-for-novel-runs) are meant to enhance reproducibility and to run new/updated simulation.
 Content:
-1. [Updating the ModelSEED db](modelseed-db)
-2. [Defintion of a biomass function](biomass-function)
-3. [Reconstruction of draft networks with KBase](draft-networks)
-4. [Definition of growth matrices from biolog plate experiments](growth-matrices)
+1. [Updating the ModelSEED db](#modelseed-db)
+2. [Defintion of a biomass function](#biomass-function)
+3. [Reconstruction of draft networks with KBase](#draft-networks)
+4. [Definition of growth matrices from biolog plate experiments](#growth-matrices)
 
 
 
