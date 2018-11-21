@@ -90,7 +90,7 @@ will print the conditions in separate files. Those files should be identical for
 
 
 
-##Instructions for novel runs
+## Instructions for novel runs
 
 ### ModelSEED db
 
