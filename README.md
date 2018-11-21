@@ -58,16 +58,9 @@ Content:
 4. [Definition of growth matrices from biolog plate experiments](#growth-matrices)
 
 
-
 ## EnsembleFBA workflow
 
-
-
-Excluding the compounds not found in the matrix and G12:
-
-```bash
-for r in Root9 Root491 Root66D1; do echo $r; grep ",1" MPI${r}/growthMatrix_${r}_exclude_not_found_and_G12.csv | wc; grep ",0" MPI${r}/growthMatrix_${r}_exclude_not_found_and_G12.csv | wc; done
-```
+Excluding the [compounds not found in the matrix and G12](#note-on-n-sources), the numbers of growth and non growth media are:
 
 | |  Root9 | Root491 | Root66D1 |
 | --- | --- | --- | --- |
@@ -76,10 +69,9 @@ for r in Root9 Root491 Root66D1; do echo $r; grep ",1" MPI${r}/growthMatrix_${r}
 
 
 
-* Lowest number of growth-sustaining compounds: 55 (Root66D1)
-* Lowest number of non growth-sustaining compounds: 33 (Root491)
-* 13 compounds not in the reaction matrix
-* Choose as training set (55-13)/2 = 21 growth and (33-13)/2 = 10 non growth conditions
+* Lowest number of growth-sustaining compounds: 52 (Root66D1)
+* Lowest number of non growth-sustaining compounds: 22 (Root491)
+* Choose as training set 21 growth and 10 non growth conditions
 * Do not exclude the 5 N sources with proteomics data
 
 ### 3. Test reproducibility with fixed random seed
@@ -150,18 +142,25 @@ cd $ensembleFBA/macros
 
 ### Growth matrices
 
-Define [growth/no growth media](growthmat); input: `data/MPIRoots/biolog_summary.tsv`
+Define growth/no growth media from input experimental data (see `data/MPIRoots/biolog_summary.tsv`). In this case, the data are from a Biolog plate with
+95 different N sources. The media composition is taken from the file [`media_list_with_meta.tsv`](https://github.com/ModelSEED/ModelSEEDDatabase/blob/master/Media/media_list_with_meta.txt)
+selecting the "Nitrogen" media. The script `produceGrowthMat.py` runs different growth matrix constructions.
 
 ```bash
 cd $ensembleFBA/macros
 # Write the matlab file defining the baseline media and the table of N sources
 ./getMedia.py -m '../data/ModelSEEDdata/media_list_with_meta.tsv' -c 'Nitrogen' -b '../data/MPIRoots/biolog_summary.tsv' -o '../data/MPIRoots/singleNMedia/' -d '../data/ModelSEEDdata/compounds.tsv' -F
 # Write the growth matrix for the selected organism on the selected N sources
-for r in Root9 Root491 Root66D1; do
-./getGrowthMat.py -c '../data/MPIRoots/singleNMedia/ncompounds.tsv' -b '../data/MPIRoots/biolog_summary.tsv' -o "../data/MPI${r}/" -i "${r}" -e 'A2 A5 A12 B6 B10';
-done
+python produceGrowthMat.py
 # Done :)
 ```
+
+Output files:
+* in data/MPIRoots/: individual minimal media with different N source files; `ncompounds.tsv` table with the identified N compounds.
+* in the respective organism folder: `growthMatrix_RootX.csv` table with growth/no growth per N source
+
+
+#### Note on N sources
 
 Out of the 95 N sources, 84 are automatically matched to the DB.
 F7 (Guanosine) was removed for experimental issues, and 
@@ -189,8 +188,4 @@ The final choice is to exclude these 14 compounds:
 | G10 | D-L-a-Amino-Caprylic-Acid | Amino acid derivatives | cpd24436 |
 | G12 | a-Amino-N-Valeric-Acid | Amino acid derivatives | cpd01258 |
 
-
-Output files:
-* in data/MPIRoots/: individual minimal media with different N source files; `ncompounds.tsv` table with the identified N compounds.
-* in the respective organism folder: `growthMatrix_RootX.csv` table with growth/no growth per N source
 
