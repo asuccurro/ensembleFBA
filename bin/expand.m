@@ -35,9 +35,9 @@ if verbose > 0
     fprintf('\nExpansion Step\n');
 end
 
-if stochast > 0
-    rng(rndSeed,'twister');
-end
+%if stochast > 0
+%    rng(rndSeed,'twister');
+%end
 
 % Initialize
 prevSolutionSize = size(universalRxnSet.S,2) + size(universalRxnSet.X,2);

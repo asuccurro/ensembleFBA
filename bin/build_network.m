@@ -54,12 +54,6 @@ else
     numModels2gen = 1;
 end
 
-if isfield(params,'stochast')
-    stochast = params.stochast;
-else
-    stochast = 0;
-end
-
 if isfield(params,'rndSeed')
     rndSeed = params.rndSeed;
 else
@@ -69,6 +63,13 @@ else
     if verbose > 0
         fprintf('Shuffled rndSeed is %d \n',rndSeed);
     end
+end
+
+if isfield(params,'stochast')
+    stochast = params.stochast;
+    rng(rndSeed,'twister');
+else
+    stochast = 0;
 end
 
 if isfield(params,'sequential')

@@ -5,7 +5,7 @@ for o in Root9 Root491 Root66D1; do
     for c in _exclude_not_found_and_G12 _exclude_G12 ""; do
 	mkdir -p ../outputs/${o}${c}
 	for s in 1; do
-	    for n in 20; do
+	    for n in 10; do
 		for t in 0; do
 		    fnmx=ensemble_${o}${c}_${n}_${gc}_${ngc}_${s}_${t}
 		    ## Because matlab does not like - passed through command line (interpreted as operation!)
