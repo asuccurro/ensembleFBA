@@ -56,7 +56,7 @@ Content:
 2. [Defintion of a biomass function](#biomass-function)
 3. [Reconstruction of draft networks with KBase](#draft-networks)
 4. [Definition of growth matrices from biolog plate experiments](#growth-matrices)
-
+5. [Test reproducibility with fixed random seed](#test-reproducibility)
 
 ## EnsembleFBA workflow
 
@@ -68,23 +68,32 @@ Excluding the [compounds not found in the matrix and G12](#note-on-n-sources), t
 | 0 | 26 | 22 | 28 |
 
 
+### Ensemble generation
 
-* Lowest number of growth-sustaining compounds: 52 (Root66D1)
-* Lowest number of non growth-sustaining compounds: 22 (Root491)
-* Choose as training set 21 growth and 10 non growth conditions
-* Do not exclude the 5 N sources with proteomics data
+I made a conservative choice for the number of training conditions (gapfilling media):
+half of the lowest number of growth-sustaining or growth-sustaining compounds, i.e. 26 and 11 respectively.
 
-### 3. Test reproducibility with fixed random seed
+The ensembles are generated in two versions: excluding not found compounds and G12 (`growthMatrix_Root9_exclude_not_found_and_G12.csv`),
+and excluding also the 5 N sources with proteomics data (`growthMatrix_Root9_exclude_5N_and_nf_and_G12.csv`)
 
-Run the `reproduce_runEnsemble_allRoots.sh` script. Check that the networks are reconstructed on the same conditions in the same order:
+Running:
+```bash
+source runEnsemble_manuscript.sh
+```
+will start in total 6 reconstruction jobs in the background. On a 16 core desktop, they take about 2 days to complete.
+The jobs can be monitored via the log files (`/tmp/ensemble_Root*`) and error files (`/tmp/err_ensemble_Root*`).
+
+
+### Analysis on ensembles
+
+Once the ensembles are successfully generated, ensembleFBA will perform FBA on all the networks on all the conditions.
+The script:
 
 ```bash
-for f in /tmp/ensemble_Root66D1_*10_21*; do awk '/p1/{n=NR} n && NR==n+4 || NR==n+8' $f > /tmp/gcorder_${f:5:-3}out; done
+source analyseEnsemble_manuscript.sh
 ```
 
-will print the conditions in separate files. Those files should be identical for the conditions `_exclude_G12` and `_exclude_not_found_and_G12`, while the condition not excluding any compound should at some point differ (the condition "55" should at some point appear).
-
-
+will produce 
 
 ## Instructions for novel runs
 
@@ -187,5 +196,17 @@ The final choice is to exclude these 14 compounds:
 | G7 | D-L-a-Amino-N-Butyric-Acid | Amino acid derivatives | cpd01573 |
 | G10 | D-L-a-Amino-Caprylic-Acid | Amino acid derivatives | cpd24436 |
 | G12 | a-Amino-N-Valeric-Acid | Amino acid derivatives | cpd01258 |
+
+
+### Test reproducibility
+
+Run the `reproduce_runEnsemble_allRoots.sh` script, which sets the random seed and has verbosity turned on.
+Check that the networks are reconstructed on the same conditions in the same order:
+
+```bash
+for f in /tmp/ensemble_Root66D1_*10_21*; do awk '/p1/{n=NR} n && NR==n+4 || NR==n+8' $f > /tmp/gcorder_${f:5:-3}out; done
+```
+
+will print the conditions in separate files. Those files should be identical for the conditions `_exclude_G12` and `_exclude_not_found_and_G12`, while the condition not excluding any compound should at some point differ (the condition "55" should at some point appear).
 
 
