@@ -1,4 +1,4 @@
-# 
+# Genome Scale Model Analysis of MPI Root9, Root491, and Root66D1 with EnsembleFBA
 
 This is a forked copy of Biggs MB and Papin JA's EnsembleFBA code, adapted for the
 analysis performed in [Jacoby, Succurro, Kopriva 2018](MANUSCRIPT). For the original EnsembleFBA repository [click here](https://github.com/mbi2gs/ensembleFBA).
@@ -50,9 +50,49 @@ matlab -nodesktop -nosplash -nodisplay  -r "testMPIRoot('Root66D1'); quit"
 ### 4. Other technical details
 
 The above setup are enough to re-run the simulations of [Jacoby, Succurro, Kopriva 2018](MANUSCRIPT).
-The following instructions are meant to enhance reproducibility and to run new/updated simulation.
+The additional instructions [at the end of the wiki](#addins) are meant to enhance reproducibility and to run new/updated simulation.
 
-#### ModelSEED db
+
+
+
+## EnsembleFBA workflow
+
+
+
+Excluding the compounds not found in the matrix and G12:
+
+```bash
+for r in Root9 Root491 Root66D1; do echo $r; grep ",1" MPI${r}/growthMatrix_${r}_exclude_not_found_and_G12.csv | wc; grep ",0" MPI${r}/growthMatrix_${r}_exclude_not_found_and_G12.csv | wc; done
+```
+
+| |  Root9 | Root491 | Root66D1 |
+| --- | --- | --- | --- |
+| 1 | 54 | 58 | 52 |
+| 0 | 26 | 22 | 28 |
+
+
+
+* Lowest number of growth-sustaining compounds: 55 (Root66D1)
+* Lowest number of non growth-sustaining compounds: 33 (Root491)
+* 13 compounds not in the reaction matrix
+* Choose as training set (55-13)/2 = 21 growth and (33-13)/2 = 10 non growth conditions
+* Do not exclude the 5 N sources with proteomics data
+
+### 3. Test reproducibility with fixed random seed
+
+Run the `reproduce_runEnsemble_allRoots.sh` script. Check that the networks are reconstructed on the same conditions in the same order:
+
+```bash
+for f in /tmp/ensemble_Root66D1_*10_21*; do awk '/p1/{n=NR} n && NR==n+4 || NR==n+8' $f > /tmp/gcorder_${f:5:-3}out; done
+```
+
+will print the conditions in separate files. Those files should be identical for the conditions `_exclude_G12` and `_exclude_not_found_and_G12`, while the condition not excluding any compound should at some point differ (the condition "55" should at some point appear).
+
+
+
+## <a id="addins"></a> Instructions for novel runs
+
+### ModelSEED db
 
 The database for compounds and reactions were downloaded from github.com/ModelSEED/ModelSEEDDatabase/ on May 24th, 2018 from
 the master branch (corresponding in the current rebased master to commit 25c8d32e50cefe16f3bee5725577c6035ca0a5b8), and the reaction matrix updated as follows:
@@ -70,7 +110,7 @@ source generateSEEDMat.sh
 # Done! :)
 ```
 
-#### Biomass function
+### Biomass function
 
 Following what done in the original EnsembleFBA analysis, a standard (minimal) biomass function definition is used. The
 biomass matrix (file `$ensembleFBA/data/MPIRoots/biomassFn_PA14_2018.mat`) has to
@@ -81,7 +121,7 @@ cd $ensembleFBA/runmatlab
 source updateBM.sh
 ```
 
-#### Draft networks
+### Draft networks
 
 Draft, non-gapfilled Genome Scale Metabolic Network Models were obtained through [this KBase narrative](https://narrative.kbase.us/narrative/ws.37070.obj.1).
 The tsv files were downloaded and re-organized into the folders
@@ -104,7 +144,7 @@ cd $ensembleFBA/macros
 ./reformatReactions.py -i Root66D1
 ```
 
-#### Growth matrices
+### Growth matrices
 
 Define [growth/no growth media](growthmat); input: `data/MPIRoots/biolog_summary.tsv`
 
@@ -149,38 +189,4 @@ The final choice is to exclude these 14 compounds:
 Output files:
 * in data/MPIRoots/: individual minimal media with different N source files; `ncompounds.tsv` table with the identified N compounds.
 * in the respective organism folder: `growthMatrix_RootX.csv` table with growth/no growth per N source
-
-
-## EnsembleFBA workflow
-
-
-
-Excluding the compounds not found in the matrix and G12:
-
-```bash
-for r in Root9 Root491 Root66D1; do echo $r; grep ",1" MPI${r}/growthMatrix_${r}_exclude_not_found_and_G12.csv | wc; grep ",0" MPI${r}/growthMatrix_${r}_exclude_not_found_and_G12.csv | wc; done
-```
-
-| |  Root9 | Root491 | Root66D1 |
-| --- | --- | --- | --- |
-| 1 | 54 | 58 | 52 |
-| 0 | 26 | 22 | 28 |
-
-
-
-* Lowest number of growth-sustaining compounds: 55 (Root66D1)
-* Lowest number of non growth-sustaining compounds: 33 (Root491)
-* 13 compounds not in the reaction matrix
-* Choose as training set (55-13)/2 = 21 growth and (33-13)/2 = 10 non growth conditions
-* Do not exclude the 5 N sources with proteomics data
-
-### 3. Test reproducibility with fixed random seed
-
-Run the `reproduce_runEnsemble_allRoots.sh` script. Check that the networks are reconstructed on the same conditions in the same order:
-
-```bash
-for f in /tmp/ensemble_Root66D1_*10_21*; do awk '/p1/{n=NR} n && NR==n+4 || NR==n+8' $f > /tmp/gcorder_${f:5:-3}out; done
-```
-
-will print the conditions in separate files. Those files should be identical for the conditions `_exclude_G12` and `_exclude_not_found_and_G12`, while the condition not excluding any compound should at some point differ (the condition "55" should at some point appear).
 
