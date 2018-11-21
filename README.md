@@ -50,7 +50,7 @@ matlab -nodesktop -nosplash -nodisplay  -r "testMPIRoot('Root66D1'); quit"
 ### 4. Other technical details
 
 The above setup are enough to re-run the simulations of [Jacoby, Succurro, Kopriva 2018](MANUSCRIPT).
-The additional instructions [at the end of the wiki](#addins) are meant to enhance reproducibility and to run new/updated simulation.
+The additional instructions [at the end of the wiki](#instructions-for-novel-runs) are meant to enhance reproducibility and to run new/updated simulation.
 
 
 
@@ -90,7 +90,7 @@ will print the conditions in separate files. Those files should be identical for
 
 
 
-## <a id="addins"></a> Instructions for novel runs
+##Instructions for novel runs
 
 ### ModelSEED db
 
