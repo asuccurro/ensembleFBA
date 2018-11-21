@@ -1,8 +1,8 @@
 ngc=10
 gc=21
 for o in Root9 Root491 Root66D1; do
-    #for c in "" _exclude_C4-C9-D2-D6-D7-D10-E6-E7-E10-G4-G6-G7-G10-G12 _exclude_G12; do
-    for c in _exclude_not_found_and_G12 _exclude_G12 ""; do
+    for c in _exclude_not_found_and_G12; do
+    #for c in _exclude_not_found_and_G12 _exclude_G12 ""; do
 	mkdir -p ../outputs/${o}${c}
 	for s in 1; do
 	    for n in 10; do
