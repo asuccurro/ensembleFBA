@@ -93,7 +93,28 @@ The script:
 source analyseEnsemble_manuscript.sh
 ```
 
-will produce 
+will produce various files, all named starting with "ensemble_X_size_Y_gcs_Z_ngcs_stochasticWeights_1". The files are described below.
+
+#### _conditions.csv
+
+
+#### _gc_tab.csv; _ngc_tab.csv; _nfg_tab.csv
+
+
+#### _proteomics_growth.csv
+
+
+#### _fba_sol_cpdXXXXX.csv and _exc_rxns_cpdXXXXX.csv
+
+
+
+
+
+
+
+
+
+
 
 ## Instructions for novel runs
 

@@ -53,15 +53,53 @@ writetable(TNG,[outpath ensembleFname, '_ngc_tab.csv'], 'WriteRowNames',true);
 %dlmwrite([outpath ensembleFname, '_gc_growth.csv'], m.gc_growth>0, ',');
 %dlmwrite([outpath ensembleFname, '_ngc_growth.csv'], m.ngc_growth>0, ',');
 
+
+%%%%%%%%%%%%%%%%%%%
+%% Check FBA on list of cpds
+%% Proteomics cpds : cpd00013 cpd00073 cpd00023 cpd00039 cpd00054
+%% (A2 A5 A12 B6 B10)
+%%%%%%%%%%%%%%%%%%%
 N=uint8(m.xt_growth>0);
 TG=array2table(N,'RowNames',m.notForGapfillCpdList);
+writetable(TG,[outpath ensembleFname, '_nfg_tab.csv'], 'WriteRowNames',true);
+
+proteomicsCpdList = cellstr(['cpd00013'; 'cpd00073'; 'cpd00023'; 'cpd00039'; 'cpd00054']);
+proteomicsXSources = [];
+for k = 1:size(proteomicsCpdList,1);
+  x = find(strcmp(seed_rxns_mat.mets, proteomicsCpdList(k,:)));
+  if length(x) > 0
+    proteomicsXSources = [proteomicsXSources, x];
+  else
+    fprintf(['AS-WARNING ' char(proteomicsCpdList(k,:)) ' (for proteomics) not found in the rxn matrix\n']);
+  end
+end
+
+blmedia = baselinemedia();
+
+minimalMediaBase = zeros(length(seed_rxns_mat.mets),1);
+b = [];
+for k = 1:length(blmedia);
+  b = [b, find(strcmp(seed_rxns_mat.mets, blmedia(k)))];
+end
+
+minimalMediaBase(b,1) = -1000;
+proteomicsConditions = repmat(minimalMediaBase,[1,length(proteomicsXSources)]);
+for i = 1:length(proteomicsXSources)
+    proteomicsConditions(proteomicsXSources(i),i) = -100;
+end
+
+
+[proteomics_growth] = ensembleFBA(m.ensemble,seed_rxns_mat.Ex_names,proteomicsConditions,0);
+N=uint8(proteomics_growth>0);
+TG=array2table(N,'RowNames',proteomicsCpdList);
 writetable(TG,[outpath ensembleFname, '_proteomics_growth.csv'], 'WriteRowNames',true);
 
 %dlmwrite([outpath ensembleFname, '_cond.csv'], c, ',');
 
 e = m.ensemble;
 r = seed_rxns_mat.Ex_names;
-c = m.ensemble{1}.notForGapfillConditions;
+%c = m.ensemble{1}.notForGapfillConditions;
+c = proteomicsConditions;
 
 % for every media condition and for every network store the solution fluxes
 % store in place 1 the reactions, in place 2 the EX_rxns
@@ -96,8 +134,8 @@ for i = 1:size(c,2)
   % Actually we do not care about Ex reactions
   N = s_rx;
   T=array2table(N,'RowNames',seed_rxns_mat.rxns);
-  writetable(T,[outpath ensembleFname '_fba_sol_' char(m.notForGapfillCpdList(i)) '.csv'], 'WriteRowNames',true);
-  dlmwrite([outpath ensembleFname, '_exc_rxns_' char(m.notForGapfillCpdList(i)) '.csv'], s_ex, ',');
+  writetable(T,[outpath ensembleFname '_fba_sol_' char(proteomicsCpdList(i)) '.csv'], 'WriteRowNames',true);
+  dlmwrite([outpath ensembleFname, '_exc_rxns_' char(proteomicsCpdList(i)) '.csv'], s_ex, ',');
 end
 
 % To do in python
