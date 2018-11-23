@@ -61,7 +61,9 @@ def main():
     Nngcs = int(tmpstr[5])
     isStochW = int(tmpstr[8])
 
-    ftit = 'Growth vs No Growth predictions in an Ensemble of size %d' % (Nens)
+
+    orgID = args.iopath.split('/')[-2].split('_')[0]
+    ftit = '%s Growth vs No Growth predictions, Ensemble size %d' % (orgID, Nens)
 
     fname=args.iopath+args.fname
     dfc=pandas.read_csv(fname+'_conditions.csv')
@@ -76,7 +78,7 @@ def main():
 
     # Add excluded conditions to DF
     # add prdf to gdf
-    if 'exclude_A2-A5-A12-B6-B10' in fname:
+    if 'exclude_A2-A5-A12-B6-B10' in fname or 'exclude_5N' in fname:
         gdf = pandas.concat([gdf0, prdf])
     else:
         gdf = gdf0
@@ -120,40 +122,49 @@ def main():
     #ta,tp,tr = getNetworkStats(testg, testng)
     #print(ta['Majority'], tp['Majority'], tr['Majority'])
 
-    addMajorityCol(rndm_gdf)
-    addMajorityCol(rndm_ngdf)
-    ra,rp,rr = getNetworkStats(rndm_gdf,rndm_ngdf)
-    if args.latex:
-        print('Random Ensemble & %.3f & %.3f & %.3f \\\\' % (ra['Majority'], rp['Majority'], rr['Majority']))
-    if args.markdown:
-        print('| Random Ensemble | %.3f | %.3f | %.3f | ' % (ra['Majority'], rp['Majority'], rr['Majority']))
-
     gdf_masked_maj = gdf_masked.copy()
     addMajorityCol(gdf_masked_maj)
     ngdf_masked_maj = ngdf_masked.copy()
     addMajorityCol(ngdf_masked_maj)
+
+    rndm_gdf_masked  = rndm_gdf.copy()
+    rndm_ngdf_masked = rndm_ngdf.copy()
+    rndm_gdf_masked  = rndm_gdf.where(gdf_mask, np.nan)
+    rndm_ngdf_masked = rndm_ngdf.where(ngdf_mask, np.nan)
+    addMajorityCol(rndm_gdf_masked)
+    addMajorityCol(rndm_ngdf_masked)
 
     if args.unmask:
         plotBiologPlate(gdf, ngdf, args.unmask, fname+'_biologPlate_includingTrainingCond.png', ftit, pm_w, pm_cpd, prdf.index)
         addMajorityCol(gdf)
         addMajorityCol(ngdf)
         a,p,r = getNetworkStats(gdf,ngdf)
+        addMajorityCol(rndm_gdf)
+        addMajorityCol(rndm_ngdf)
+        ra,rp,rr = getNetworkStats(rndm_gdf,rndm_ngdf)
         if args.latex:
             print('Unmasked Ensemble & %.3f & %.3f & %.3f \\\\' % (a['Majority'], p['Majority'], r['Majority']))
-            print('Unmasked Ensemble & ',a['Majority'], ' & ', p['Majority'], ' & ', r['Majority'], '\\\\ ')
+            print('Random Ensemble & %.3f & %.3f & %.3f \\\\' % (ra['Majority'], rp['Majority'], rr['Majority']))
         if args.markdown:
             print('| Unmasked Ensemble | %.3f | %.3f | %.3f | ' % (a['Majority'], p['Majority'], r['Majority']))
+            print('| Random Ensemble | %.3f | %.3f | %.3f | ' % (ra['Majority'], rp['Majority'], rr['Majority']))
         return
     else:
-        plotBiologPlate(gdf_masked_maj, ngdf_masked_maj, args.unmask, fname+'_biologPlate.png', ftit, pm_w, pm_cpd, prdf.index)
+        plotBiologPlate(gdf_masked_maj, ngdf_masked_maj, args.unmask, fname+'_biologPlate.png', ftit, pm_w, pm_cpd, prdf.index, args.markprot)
         a,p,r = getNetworkStats(gdf_masked_maj,ngdf_masked_maj)
+        ra,rp,rr = getNetworkStats(rndm_gdf_masked,rndm_ngdf_masked)
+        #addMajorityCol(rndm_gdf)
+        #addMajorityCol(rndm_ngdf)
+        #ra,rp,rr = getNetworkStats(rndm_gdf,rndm_ngdf)
         if args.latex:
             print('Masked Ensemble & %.3f & %.3f & %.3f \\\\' % (a['Majority'], p['Majority'], r['Majority']))
+            print('Random Ensemble & %.3f & %.3f & %.3f \\\\' % (ra['Majority'], rp['Majority'], rr['Majority']))
         if args.markdown:
             print('| Masked Ensemble | %.3f | %.3f | %.3f | ' % (a['Majority'], p['Majority'], r['Majority']))
+            print('| Random Ensemble | %.3f | %.3f | %.3f | ' % (ra['Majority'], rp['Majority'], rr['Majority']))
     return
 
-def plotBiologPlate(gdf, ngdf, unmask, figname, figtit, pm_w, pm_cpd, pr_cpd):
+def plotBiologPlate(gdf, ngdf, unmask, figname, figtit, pm_w, pm_cpd, pr_cpd, markprot=False):
     if unmask:
         if 'TotG' in list(gdf.columns):
             print('New columns TotG, TotNG and Majority should not be in the original DF!')
@@ -198,7 +209,7 @@ def plotBiologPlate(gdf, ngdf, unmask, figname, figtit, pm_w, pm_cpd, pr_cpd):
                     ax.text(0., 0., 'control', horizontalalignment='center', fontsize=6)
                 else:
                     ax.text(0., 0., 'N/A', horizontalalignment='center', fontsize=6)
-            if cpd in pr_cpd:
+            if cpd in pr_cpd and markprot:
                 autoAxis = ax.axis()
                 rec = matplotlib.patches.Rectangle((autoAxis[0],autoAxis[2]+0.1),(autoAxis[1]-autoAxis[0]),(autoAxis[3]-autoAxis[2])+0.5,fill=False,lw=1, color='red')
                 rec = ax.add_patch(rec)
@@ -210,6 +221,7 @@ def options():
     '''define here in-line arguments'''
     parser = argparse.ArgumentParser(description='Parsing options')
     parser.add_argument('-V', '--verbose', help='increase output verbosity', action='store_true')
+    parser.add_argument('-P', '--markprot', help='mark the proteomics N sources', action='store_true')
     parser.add_argument('-U', '--unmask', help='produce unmasked plots', action='store_true')
     parser.add_argument('-L', '--latex', help='print latex tab outputs', action='store_true')
     parser.add_argument('-M', '--markdown', help='print markdown tab outputs', action='store_true')

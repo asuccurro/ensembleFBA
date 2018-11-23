@@ -12,7 +12,8 @@ import subprocess
 import collections
 import pandas
 
-shortened = {'C4-C9-D2-D6-D7-D10-E6-E7-E10-G4-G6-G7-G10-G12': 'not_found_and_G12'}
+shortened = {'C4-C9-D2-D6-D7-D10-E6-E7-E10-G4-G6-G7-G10-G12': 'not_found_and_G12',
+             'A2-A5-A12-B6-B10-C4-C9-D2-D6-D7-D10-E6-E7-E10-G4-G6-G7-G10-G12': '5N_and_nf_and_G12'}
 
 def main():
     args = options()

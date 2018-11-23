@@ -14,6 +14,9 @@ load 2018_seed_rxns
 seed_rxns_mat.X = -1*speye(length(seed_rxns_mat.mets));
 seed_rxns_mat.Ex_names = strcat('Ex_',seed_rxns_mat.mets);
 
+% 'cpd00013'; 'cpd00073'; 'cpd00023'; 'cpd00039'; 'cpd00054'
+proteomicsCpdList = cellstr([XXXCPDLIST]);
+
 % Load the struct containing the ensemble
 load(fullfile('..', 'outputs', 'XXXDNAME', ensembleFname))
 % m =
@@ -63,7 +66,6 @@ N=uint8(m.xt_growth>0);
 TG=array2table(N,'RowNames',m.notForGapfillCpdList);
 writetable(TG,[outpath ensembleFname, '_nfg_tab.csv'], 'WriteRowNames',true);
 
-proteomicsCpdList = cellstr(['cpd00013'; 'cpd00073'; 'cpd00023'; 'cpd00039'; 'cpd00054']);
 proteomicsXSources = [];
 for k = 1:size(proteomicsCpdList,1);
   x = find(strcmp(seed_rxns_mat.mets, proteomicsCpdList(k,:)));

@@ -1,5 +1,5 @@
-ngc=10
-gc=21
+ngc=11
+gc=26
 for o in Root9 Root491 Root66D1; do
     #for c in "" _exclude_A2-A5-A12-B6-B10; do
     for c in _exclude_not_found_and_G12 _exclude_A2-A5-A12-B6-B10; do
