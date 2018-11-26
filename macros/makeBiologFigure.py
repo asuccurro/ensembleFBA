@@ -61,6 +61,7 @@ def main():
     Nngcs = int(tmpstr[5])
     isStochW = int(tmpstr[8])
 
+    np.random.seed(0)
 
     orgID = args.iopath.split('/')[-2].split('_')[0]
     ftit = '%s Growth vs No Growth predictions, Ensemble size %d' % (orgID, Nens)
@@ -127,10 +128,14 @@ def main():
     ngdf_masked_maj = ngdf_masked.copy()
     addMajorityCol(ngdf_masked_maj)
 
+    rndm_gdf_mask = gdf_mask.reset_index().drop('Row', axis=1)
+    rndm_ngdf_mask= ngdf_mask.reset_index().drop('Row', axis=1)
+
     rndm_gdf_masked  = rndm_gdf.copy()
     rndm_ngdf_masked = rndm_ngdf.copy()
-    rndm_gdf_masked  = rndm_gdf.where(gdf_mask, np.nan)
-    rndm_ngdf_masked = rndm_ngdf.where(ngdf_mask, np.nan)
+    rndm_gdf_masked  = rndm_gdf.where(rndm_gdf_mask, np.nan)
+    rndm_ngdf_masked = rndm_ngdf.where(rndm_ngdf_mask, np.nan)
+
     addMajorityCol(rndm_gdf_masked)
     addMajorityCol(rndm_ngdf_masked)
 
@@ -153,9 +158,6 @@ def main():
         plotBiologPlate(gdf_masked_maj, ngdf_masked_maj, args.unmask, fname+'_biologPlate.png', ftit, pm_w, pm_cpd, prdf.index, args.markprot)
         a,p,r = getNetworkStats(gdf_masked_maj,ngdf_masked_maj)
         ra,rp,rr = getNetworkStats(rndm_gdf_masked,rndm_ngdf_masked)
-        #addMajorityCol(rndm_gdf)
-        #addMajorityCol(rndm_ngdf)
-        #ra,rp,rr = getNetworkStats(rndm_gdf,rndm_ngdf)
         if args.latex:
             print('Masked Ensemble & %.3f & %.3f & %.3f \\\\' % (a['Majority'], p['Majority'], r['Majority']))
             print('Random Ensemble & %.3f & %.3f & %.3f \\\\' % (ra['Majority'], rp['Majority'], rr['Majority']))

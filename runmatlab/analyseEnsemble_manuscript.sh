@@ -13,7 +13,11 @@ for o in Root9 Root491 Root66D1; do
 	echo $mydir
 	echo $sfnm
 	echo $fnm
-	matlab -nodesktop -nosplash -nodisplay -r "ae_${sfnm};exit" 
+	#matlab -nodesktop -nosplash -nodisplay -r "ae_${sfnm};exit"
+	cp ../macros/00_storeBiomassFlux.m bm_${sfnm}.m
+	sed -i "s/XXXFNAME/${fnm}/g" bm_${sfnm}.m
+	sed -i "s@XXXDNAME@${mydir}@g" bm_${sfnm}.m
+	matlab -nodesktop -nosplash -nodisplay -r "bm_${sfnm};exit" 
     done
 done
 

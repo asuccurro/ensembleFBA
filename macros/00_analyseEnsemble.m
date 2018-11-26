@@ -5,7 +5,7 @@
 %**  created:       2018/06/04     **
 %**  last modified: 2018/06/04     **
 %************************************
-%** Analyse the ensemble for the Root491 draft GSMN
+%** Template to analyse ensemble
 %************************************
 ensembleFname='XXXFNAME';
 outpath='../outputs/XXXDNAME/';

@@ -1,5 +1,6 @@
 import pandas
 import numpy as np
+from makeBiologFigure import *
 
 fname='../outputs/Root66D1_exclude_5N_and_nf_and_G12/ensemble_50_size_26_gcs_11_ngcs_stochasticWeights_1'
 
@@ -54,10 +55,33 @@ gdf_masked_maj = gdf_masked.copy()
 addMajorityCol(gdf_masked_maj)
 ngdf_masked_maj = ngdf_masked.copy()
 addMajorityCol(ngdf_masked_maj)
-    
+
+
+rndm_gdf_mask = gdf_mask.reset_index().drop('Row', axis=1)
+rndm_ngdf_mask= ngdf_mask.reset_index().drop('Row', axis=1)
+
 rndm_gdf_masked  = rndm_gdf.copy()
 rndm_ngdf_masked = rndm_ngdf.copy()
-rndm_gdf_masked  = rndm_gdf.where(gdf_mask, np.nan)
-rndm_ngdf_masked = rndm_ngdf.where(ngdf_mask, np.nan)
+rndm_gdf_masked  = rndm_gdf.where(rndm_gdf_mask, np.nan)
+rndm_ngdf_masked = rndm_ngdf.where(rndm_ngdf_mask, np.nan)
 addMajorityCol(rndm_gdf_masked)
 addMajorityCol(rndm_ngdf_masked)
+
+
+
+
+
+
+
+
+gfc = []
+for i in dfc.index:
+    gfc.append(list(dfc.iloc[i,1:(1+Ngcs+Nngcs)].values))
+
+gf_mask = gdf.copy()
+for i in range(len(gfc)):
+    #print(ngdf.iloc[:,i].index.isin(ngcs[i]))
+    gf_mask.iloc[:,i] = ~gdf.iloc[:,i].index.isin(gfc[i])
+
+    
+gf_masked[o] = growth_fl[o].where(gf_mask, np.nan)

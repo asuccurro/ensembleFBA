@@ -124,7 +124,19 @@ cd $ensembleFBA/macros/
 source plotBiolog.sh
 ```
 
+Produces plots of Biolog Plate (manuscript Figure XYZ). Prints the table with statistical figures for the ensemble (Accuracy, Precision, Recall).
 
+
+### Fraction activiy
+
+```bash
+cd $ensembleFBA/macros/
+source ../venvpy/bin/activate
+python computeFractionActivity.py
+deactivate
+```
+
+Produces the file `../outputs/activity_exclude_not_found_and_G12.csv`. Different settings can be passed through argparse to the script.
 
 
 ## Instructions for novel runs

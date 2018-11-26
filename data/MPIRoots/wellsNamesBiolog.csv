@@ -1,0 +1,95 @@
+Well,Compound,Class
+D12,Agmatine,Amines
+D9,Ethanolamine,Amines
+D8,Ethylamine,Amines
+D10,Ethylenediamine,Amines
+E1,Histamine,Amines
+D5,Methylamine,Amines
+D6,N-Amylamine,Amines
+D7,N-Butylamine,Amines
+D11,Putrescine,Amines
+E3,Tyramine,Amines
+E2,b-Phenylethylamine,Amines
+G10,D-L-a-Amino-Caprylic-Acid,Amino acid derivatives
+G7,D-L-a-Amino-N-Butyric-Acid,Amino acid derivatives
+C10,L-Citrulline,Amino acid derivatives
+C11,L-Homoserine,Amino acid derivatives
+C12,L-Ornithine,Amino acid derivatives
+D3,L-Pyroglutamic-Acid,Amino acid derivatives
+D1,N-Acetyl-L-Glutamic-Acid,Amino acid derivatives
+D2,N-Phthaloyl-L-Glutamic-Acid,Amino acid derivatives
+G12,a-Amino-N-Valeric-Acid,Amino acid derivatives
+G8,g-Amino-N-Butyric-Acid,Amino acid derivatives
+G11,d-Amino-N-Valeric-Acid,Amino acid derivatives
+G9,e-Amino-N-Caproic-Acid,Amino acid derivatives
+C3,D-Alanine,D-amino acids
+C4,D-Asparagine,D-amino acids
+C5,D-Aspartic-Acid,D-amino acids
+C6,D-Glutamic-Acid,D-amino acids
+C7,D-Lysine,D-amino acids
+C8,D-Serine,D-amino acids
+C9,D-Valine,D-amino acids
+A2,Ammonia,Inorganic compounds
+D4,Hydroxylamine,Inorganic compounds
+A4,Nitrate,Inorganic compounds
+A3,Nitrite,Inorganic compounds
+B2,Glycine,L-amino acids
+A7,L-Alanine,L-amino acids
+A8,L-Arginine,L-amino acids
+A9,L-Asparagine,L-amino acids
+A10,L-Aspartic-Acid,L-amino acids
+A11,L-Cysteine,L-amino acids
+A12,L-Glutamic-Acid,L-amino acids
+B1,L-Glutamine,L-amino acids
+B3,L-Histidine,L-amino acids
+B4,L-Isoleucine,L-amino acids
+B5,L-Leucine,L-amino acids
+B6,L-Lysine,L-amino acids
+B7,L-Methionine,L-amino acids
+B8,L-Phenylalanine,L-amino acids
+B9,L-Proline,L-amino acids
+B10,L-Serine,L-amino acids
+B11,L-Threonine,L-amino acids
+B12,L-Tryptophan,L-amino acids
+C1,L-Tyrosine,L-amino acids
+C2,L-Valine,L-amino acids
+E7,D-L-Lactamide,Modified sugars
+E9,D-Galactosamine,Modified sugars
+E8,D-Glucosamine,Modified sugars
+E10,D-Mannosamine,Modified sugars
+E6,Glucuronamide,Modified sugars
+E12,N-Acetyl-D-Galactosamine,Modified sugars
+E11,N-Acetyl-D-Glucosamine,Modified sugars
+F1,N-Acetyl-D-Mannosamine,Modified sugars
+F2,Adenine,Nitrogen bases
+G4,Alloxan,Nitrogen bases
+F5,Cytosine,Nitrogen bases
+F6,Guanine,Nitrogen bases
+F8,Thymine,Nitrogen bases
+F10,Uracil,Nitrogen bases
+G1,Xanthine,Nitrogen bases
+F3,Adenosine,Nucleosides and nucleotides
+F4,Cytidine,Nucleosides and nucleotides
+F12,Inosine,Nucleosides and nucleotides
+F9,Thymidine,Nucleosides and nucleotides
+F11,Uridine,Nucleosides and nucleotides
+G2,Xanthosine,Nucleosides and nucleotides
+H1,Ala-Asp,Oligopeptides
+H2,Ala-Gln,Oligopeptides
+H3,Ala-Glu,Oligopeptides
+H4,Ala-Gly,Oligopeptides
+H5,Ala-His,Oligopeptides
+H6,Ala-Leu,Oligopeptides
+H7,Ala-Thr,Oligopeptides
+H8,Gly-Asn,Oligopeptides
+H9,Gly-Gln,Oligopeptides
+H10,Gly-Glu,Oligopeptides
+H11,Gly-Met,Oligopeptides
+H12,Met-Ala,Oligopeptides
+E4,Acetamide,Other organic compounds
+G5,Allantoin,Other organic compounds
+A6,Biuret,Other organic compounds
+E5,Formamide,Other organic compounds
+G6,Parabanic-Acid,Other organic compounds
+A5,Urea,Other organic compounds
+G3,Uric-Acid,Other organic compounds

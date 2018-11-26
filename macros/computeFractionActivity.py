@@ -41,51 +41,70 @@ def main():
 
     flist = {}
     conditions_df = {}
-    growth_df = {}
-    nongrowth_df = {}
-    ngdf_masked = {}
-    gdf_masked = {}
+    growth_fl = {}
+    gf_masked = {}
+    gng_masked = {}
+    gf_means = {}
     for o in orglist:
         flist[o] = args.iopath+o+args.condition+'/'+args.fname
         conditions_df[o] = pandas.read_csv(flist[o]+'_conditions.csv')
-        growth_df[o] = pandas.read_csv(flist[o]+'_gc_tab.csv', index_col=0)
-        nongrowth_df[o] = pandas.read_csv(flist[o]+'_ngc_tab.csv', index_col=0)
+        growth_fl[o] = pandas.read_csv(flist[o]+'_biomassFluxes.csv', index_col=0)
+        growth_fl[o] = growth_fl[o].where(growth_fl[o] > 0.000000001, 0)
         
-        gcs = []
-        ngcs = []
+        gfc = []
         for i in conditions_df[o].index:
-            gcs.append(list(conditions_df[o].iloc[i,1:(1+Ngcs)].values))
-            ngcs.append(list(conditions_df[o].iloc[i,(1+Ngcs):(1+Ngcs+Nngcs)].values))
+            gfc.append(list(conditions_df[o].iloc[i,1:(1+Ngcs+Nngcs)].values))
 
-        ngdf_mask = nongrowth_df[o].copy()
-        for i in range(len(ngcs)):
+        gf_mask = growth_fl[o].copy()
+        for i in range(len(gfc)):
             #print(ngdf.iloc[:,i].index.isin(ngcs[i]))
-            ngdf_mask.iloc[:,i] = ~nongrowth_df[o].iloc[:,i].index.isin(ngcs[i])
-        ngdf_masked[o] = nongrowth_df[o].where(ngdf_mask, np.nan)
+            gf_mask.iloc[:,i] = ~growth_fl[o].iloc[:,i].index.isin(gfc[i])
+            
+        gf_masked[o] = growth_fl[o].where(gf_mask, np.nan)
+        gf_means[o] = gf_masked[o].mean(1)
+        
+        gng_masked[o] = growth_fl[o].where(growth_fl[o] < 0.000000001, 1)
+        gng_masked[o] = gng_masked[o].where(gf_mask, np.nan)
 
-        gdf_mask = growth_df[o].copy()
-        for i in range(len(gcs)):
-            gdf_mask.iloc[:,i] = ~growth_df[o].iloc[:,i].index.isin(gcs[i])
-        gdf_masked[o] = growth_df[o].where(gdf_mask, np.nan)
-        addMajorityCol(gdf_masked[o])
-        addMajorityCol(ngdf_masked[o])
+        addMajorityCol(gng_masked[o])
 
-    with open(args.iopath+'activity'+args.condition+'.csv', 'w') as ofile:
+    with open(args.iopath+'activity_as_growth_fraction'+args.condition+'.csv', 'w') as ofile:
         ofile.write('Well,Name,Class,%s\n' % ','.join(orglist))
-        for c in list(gdf_masked[orglist[0]].index)+list(ngdf_masked[orglist[0]].index):
+        for c in list(gng_masked[orglist[0]].index):
             cstr = '%s,%s,%s' % (cpd2w[c], w2name[cpd2w[c]], w2class[cpd2w[c]])
             for o in orglist:
-                if c in gdf_masked[o].index:
-                    activity = gdf_masked[o].loc[c,'TotG']/(gdf_masked[o].loc[c,'TotG'] + gdf_masked[o].loc[c,'TotNG'])
-                elif c in ngdf_masked[o].index:
-                    activity = ngdf_masked[o].loc[c,'TotG']/(ngdf_masked[o].loc[c,'TotG'] + ngdf_masked[o].loc[c,'TotNG'])
+                if c in gng_masked[o].index:
+                    activity = gng_masked[o].loc[c,'TotG']/(gng_masked[o].loc[c,'TotG'] + gng_masked[o].loc[c,'TotNG'])
                 else:
                     print('AAAA')
                 cstr = cstr+ (',%.3f' % activity)
             ofile.write('%s\n' % cstr)
-    
 
-    return gdf_masked,ngdf_masked
+    with open(args.iopath+'activity_as_growth_average'+args.condition+'.csv', 'w') as ofile:
+        ofile.write('Well,Name,Class,%s\n' % ','.join(orglist))
+        for c in list(gf_means[orglist[0]].index):
+            cstr = '%s,%s,%s' % (cpd2w[c], w2name[cpd2w[c]], w2class[cpd2w[c]])
+            for o in orglist:
+                if c in gf_means[o].index:
+                    activity = gf_means[o][c]
+                else:
+                    print('AAAA')
+                cstr = cstr+ (',%.3f' % activity)
+            ofile.write('%s\n' % cstr)
+
+    with open(args.iopath+'activity_as_weighted_growth_average'+args.condition+'.csv', 'w') as ofile:
+        ofile.write('Well,Name,Class,%s\n' % ','.join(orglist))
+        for c in list(gf_means[orglist[0]].index):
+            cstr = '%s,%s,%s' % (cpd2w[c], w2name[cpd2w[c]], w2class[cpd2w[c]])
+            for o in orglist:
+                if c in gf_means[o].index:
+                    activity = gf_means[o][c]*(gng_masked[o].loc[c,'TotG']/(gng_masked[o].loc[c,'TotG'] + gng_masked[o].loc[c,'TotNG']))
+                else:
+                    print('AAAA')
+                cstr = cstr+ (',%.3f' % activity)
+            ofile.write('%s\n' % cstr)
+
+    return gf_masked
 
 
 
@@ -98,7 +117,7 @@ def options():
     parser.add_argument('-M', '--markdown', help='print markdown tab outputs', action='store_true')
     parser.add_argument('-c', '--cpds', help='compunds file', default='../data/MPIRoots/singleNMedia/ncompounds.tsv')
     parser.add_argument('-n', '--names', help='compunds wells name file', default='../data/MPIRoots/wellsNamesBiolog.csv')
-    parser.add_argument('-f', '--fname', help='baseline file name', default='ensemble_50_size_21_gcs_10_ngcs_stochasticWeights_1')
+    parser.add_argument('-f', '--fname', help='baseline file name', default='ensemble_50_size_26_gcs_11_ngcs_stochasticWeights_1')
     parser.add_argument('-p', '--iopath', help='path for input and output file', default='../outputs/')
     parser.add_argument('-o', '--orglist', help='list of organisms', default='Root9 Root491 Root66D1')
     parser.add_argument('-e', '--condition',  help='conditions e.g. excluding compounds',  default='_exclude_not_found_and_G12')
