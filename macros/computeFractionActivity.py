@@ -48,7 +48,8 @@ def main():
     for o in orglist:
         flist[o] = args.iopath+o+args.condition+'/'+args.fname
         conditions_df[o] = pandas.read_csv(flist[o]+'_conditions.csv')
-        growth_fl[o] = pandas.read_csv(flist[o]+'_biomassFluxes.csv', index_col=0)
+        growth_fl[o] = pandas.read_csv(flist[o]+'_fba_growth.csv', index_col=0)
+        #growth_fl[o] = pandas.read_csv(flist[o]+'_biomassFluxes.csv', index_col=0)
         growth_fl[o] = growth_fl[o].where(growth_fl[o] > 0.000000001, 0)
         
         gfc = []

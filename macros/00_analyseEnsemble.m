@@ -53,97 +53,13 @@ N=uint8(m.ngc_growth>0);
 TNG=array2table(N,'RowNames',m.nonGrowthCpdList);
 writetable(TNG,[outpath ensembleFname, '_ngc_tab.csv'], 'WriteRowNames',true);
 
-%dlmwrite([outpath ensembleFname, '_gc_growth.csv'], m.gc_growth>0, ',');
-%dlmwrite([outpath ensembleFname, '_ngc_growth.csv'], m.ngc_growth>0, ',');
-
-
-%%%%%%%%%%%%%%%%%%%
-%% Check FBA on list of cpds
-%% Proteomics cpds : cpd00013 cpd00073 cpd00023 cpd00039 cpd00054
-%% (A2 A5 A12 B6 B10)
-%%%%%%%%%%%%%%%%%%%
 N=uint8(m.xt_growth>0);
 TG=array2table(N,'RowNames',m.notForGapfillCpdList);
 writetable(TG,[outpath ensembleFname, '_nfg_tab.csv'], 'WriteRowNames',true);
 
-proteomicsXSources = [];
-for k = 1:size(proteomicsCpdList,1);
-  x = find(strcmp(seed_rxns_mat.mets, proteomicsCpdList(k,:)));
-  if length(x) > 0
-    proteomicsXSources = [proteomicsXSources, x];
-  else
-    fprintf(['AS-WARNING ' char(proteomicsCpdList(k,:)) ' (for proteomics) not found in the rxn matrix\n']);
-  end
-end
 
-blmedia = baselinemedia();
-
-minimalMediaBase = zeros(length(seed_rxns_mat.mets),1);
-b = [];
-for k = 1:length(blmedia);
-  b = [b, find(strcmp(seed_rxns_mat.mets, blmedia(k)))];
-end
-
-minimalMediaBase(b,1) = -1000;
-proteomicsConditions = repmat(minimalMediaBase,[1,length(proteomicsXSources)]);
-for i = 1:length(proteomicsXSources)
-    proteomicsConditions(proteomicsXSources(i),i) = -100;
-end
-
-
-[proteomics_growth] = ensembleFBA(m.ensemble,seed_rxns_mat.Ex_names,proteomicsConditions,0);
+proteomics_growth = computeFBAsol(m.ensemble, seed_rxns_mat, proteomicsCpdList, ensembleFname, outpath, 1);
 N=uint8(proteomics_growth>0);
 TG=array2table(N,'RowNames',proteomicsCpdList);
 writetable(TG,[outpath ensembleFname, '_proteomics_growth.csv'], 'WriteRowNames',true);
 
-%dlmwrite([outpath ensembleFname, '_cond.csv'], c, ',');
-
-e = m.ensemble;
-r = seed_rxns_mat.Ex_names;
-%c = m.ensemble{1}.notForGapfillConditions;
-c = proteomicsConditions;
-
-% for every media condition and for every network store the solution fluxes
-% store in place 1 the reactions, in place 2 the EX_rxns
-solutions = cell(size(c,2),2);
-for i = 1:size(c,2)
-  s_rx = zeros(size(seed_rxns_mat.rxns,1),length(e));
-  s_ex = zeros(size(seed_rxns_mat.Ex_names,1),length(e));
-  for j = 1:length(e)
-    % match model reactions to matrix; distinguish exchange from rxns as are named differently
-    model = e{j};
-    rxnindex = [];
-    exrindex = [];
-    rr = [];
-    ee = [];
-    for z = 1:length(model.rxns)
-      ef = find(strcmp(seed_rxns_mat.Ex_names, model.rxns(z)));
-      rf = find(strcmp(seed_rxns_mat.rxns, model.rxns(z)));
-      if length(rf) > 0
-        rxnindex = [rxnindex rf];
-        rr = [rr z];
-      elseif length(ef)>0
-        exrindex = [exrindex ef];
-        ee = [ee z];
-      end
-    end
-    [growth,x] = fba_flex(model,r,c(:,i),1);
-    s_rx(rxnindex,j) = x(rr);
-    s_ex(exrindex,j) = x(ee);
-  end
-  solutions{i,1} = s_rx;
-  solutions{i,2} = s_ex;
-  % Actually we do not care about Ex reactions
-  N = s_rx;
-  T=array2table(N,'RowNames',seed_rxns_mat.rxns);
-  writetable(T,[outpath ensembleFname '_fba_sol_' char(proteomicsCpdList(i)) '.csv'], 'WriteRowNames',true);
-  dlmwrite([outpath ensembleFname, '_exc_rxns_' char(proteomicsCpdList(i)) '.csv'], s_ex, ',');
-end
-
-% To do in python
-  % 1. Check "enrichment" of reactions in ensemble
-  % 2. Average fluxes and make heat map
-
-
-
-%
