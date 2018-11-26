@@ -41,6 +41,7 @@ pip install -r req_venvpy.txt
 
 
 ```bash
+cd $ensembleFBA/runmatlab
 matlab -nodesktop -nosplash -nodisplay  -r "testMPIRoot('Root9'); quit"
 matlab -nodesktop -nosplash -nodisplay  -r "testMPIRoot('Root491'); quit"
 matlab -nodesktop -nosplash -nodisplay  -r "testMPIRoot('Root66D1'); quit"
@@ -78,18 +79,20 @@ and excluding also the 5 N sources with proteomics data (`growthMatrix_Root9_exc
 
 Running:
 ```bash
+cd $ensembleFBA/runmatlab
 source runEnsemble_manuscript.sh
 ```
 will start in total 6 reconstruction jobs in the background. On a 16 core desktop, they take about 2 days to complete.
 The jobs can be monitored via the log files (`/tmp/ensemble_Root*`) and error files (`/tmp/err_ensemble_Root*`).
 
 
-### Analysis on ensembles
+### Flux Balance Analysis on ensembles
 
 Once the ensembles are successfully generated, ensembleFBA will perform FBA on all the networks on all the conditions.
 The script:
 
 ```bash
+cd $ensembleFBA/runmatlab
 source analyseEnsemble_manuscript.sh
 ```
 
@@ -97,22 +100,29 @@ will produce various files, all named starting with "ensemble_X_size_Y_gcs_Z_ngc
 
 #### _conditions.csv
 
-
+File containing the information about the ordered gapfilling conditions (columns, "Gx" or "NGx") for each of the generated network in the ensemble (rows, numbered).
 
 #### _gc_tab.csv; _ngc_tab.csv; _nfg_tab.csv
 
+Files containing the growth (1s) or no growth (0s) prediction for the networks of the ensemble (columns "Nx") for each condition (rows "cpdXXXXX"), separated
+for growth (gc), no growth (ngc) and not for gapfill (nfg) experimental conditions.
 
 #### _proteomics_growth.csv
 
+File containing the growth (1s) or no growth (0s) prediction for the networks of the ensemble (columns, "Nx") for
+the conditions passed as proteomicsCpdList variable in the `00_analyseEnsemble.m` template script (`XXXCPDLIST`).
 
 #### _fba_sol_cpdXXXXX.csv and _exc_rxns_cpdXXXXX.csv
 
+Files containing the full FBA flux solutions for each reaction (rows, "rxnXXXXX") for each network  of the ensemble (columns, "Nx").
 
 
+### Biolog plots
 
-
-
-
+```bash
+cd $ensembleFBA/macros/
+source plotBiolog.sh
+```
 
 
 
