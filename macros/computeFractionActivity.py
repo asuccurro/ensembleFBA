@@ -15,6 +15,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
 from makeBiologFigure import getNetworkStats, addMajorityCol
+import seaborn as sns
 
 def main():
     args = options()
@@ -24,6 +25,7 @@ def main():
     w2cpd=biologID.set_index('Well')['SEEDID'].T.to_dict()
     biologNames=pandas.read_csv(args.names, sep=',')
     w2name=biologNames.set_index('Well')['Compound'].T.to_dict()
+    name2w=biologNames.set_index('Compound')['Well'].T.to_dict()
     w2class=biologNames.set_index('Well')['Class'].T.to_dict()
 
     print('\n****N.B these number do not take into account excluded conditions!***\n')
@@ -69,41 +71,70 @@ def main():
 
         addMajorityCol(gng_masked[o])
 
+
+    orderedCpds = list(biologNames['Compound'])
     with open(args.iopath+'activity_as_growth_fraction'+args.condition+'.csv', 'w') as ofile:
         ofile.write('Well,Name,Class,%s\n' % ','.join(orglist))
-        for c in list(gng_masked[orglist[0]].index):
+        for cc in orderedCpds:
+            c = w2cpd[name2w[cc]]
             cstr = '%s,%s,%s' % (cpd2w[c], w2name[cpd2w[c]], w2class[cpd2w[c]])
             for o in orglist:
                 if c in gng_masked[o].index:
                     activity = gng_masked[o].loc[c,'TotG']/(gng_masked[o].loc[c,'TotG'] + gng_masked[o].loc[c,'TotNG'])
                 else:
-                    print('AAAA')
+                    activity = np.nan
                 cstr = cstr+ (',%.3f' % activity)
             ofile.write('%s\n' % cstr)
+    df=pandas.read_csv(args.iopath+'activity_as_growth_fraction'+args.condition+'.csv', sep=',')
+    #df = df.dropna()[['Name']+orglist].set_index('Name')
+    df = df.dropna()[['Name', 'Root9', 'Root66D1', 'Root491']].set_index('Name')
+    cmap = sns.cubehelix_palette(as_cmap=True, light=.9)
+    plt.figure(figsize=(5, 30))
+    sns.heatmap(df, square=True, cmap=cmap)
+    plt.savefig(args.iopath+'activity_as_growth_fraction'+args.condition+'.png')
 
     with open(args.iopath+'activity_as_growth_average'+args.condition+'.csv', 'w') as ofile:
         ofile.write('Well,Name,Class,%s\n' % ','.join(orglist))
-        for c in list(gf_means[orglist[0]].index):
+        for cc in orderedCpds:
+            c = w2cpd[name2w[cc]]
             cstr = '%s,%s,%s' % (cpd2w[c], w2name[cpd2w[c]], w2class[cpd2w[c]])
             for o in orglist:
                 if c in gf_means[o].index:
                     activity = gf_means[o][c]
                 else:
-                    print('AAAA')
+                    activity = np.nan
                 cstr = cstr+ (',%.3f' % activity)
             ofile.write('%s\n' % cstr)
+    df=pandas.read_csv(args.iopath+'activity_as_growth_average'+args.condition+'.csv', sep=',')
+    #df = df.dropna()[['Name']+orglist].set_index('Name')
+    df = df.dropna()[['Name', 'Root9', 'Root66D1', 'Root491']].set_index('Name')
+    cmap = sns.cubehelix_palette(as_cmap=True, light=.9)
+    plt.figure(figsize=(5, 30))
+    sns.heatmap(df, square=True, cmap=cmap)
+    plt.savefig(args.iopath+'activity_as_growth_average'+args.condition+'.png')
+
 
     with open(args.iopath+'activity_as_weighted_growth_average'+args.condition+'.csv', 'w') as ofile:
         ofile.write('Well,Name,Class,%s\n' % ','.join(orglist))
-        for c in list(gf_means[orglist[0]].index):
+        for cc in orderedCpds:
+            c = w2cpd[name2w[cc]]
             cstr = '%s,%s,%s' % (cpd2w[c], w2name[cpd2w[c]], w2class[cpd2w[c]])
             for o in orglist:
                 if c in gf_means[o].index:
                     activity = gf_means[o][c]*(gng_masked[o].loc[c,'TotG']/(gng_masked[o].loc[c,'TotG'] + gng_masked[o].loc[c,'TotNG']))
                 else:
-                    print('AAAA')
+                    activity = np.nan
+                    print(cc, ' (', name2w[cc], ') not in index ')
                 cstr = cstr+ (',%.3f' % activity)
             ofile.write('%s\n' % cstr)
+    df=pandas.read_csv(args.iopath+'activity_as_weighted_growth_average'+args.condition+'.csv', sep=',')
+    #df = df.dropna()[['Name']+orglist].set_index('Name')
+    df = df.dropna()[['Name', 'Root9', 'Root66D1', 'Root491']].set_index('Name')
+    cmap = sns.cubehelix_palette(as_cmap=True, light=.9)
+    plt.figure(figsize=(5, 30))
+    sns.heatmap(df, square=True, cmap=cmap)
+    plt.savefig(args.iopath+'activity_as_weighted_growth_average'+args.condition+'.png')
+
 
     return gf_masked
 
