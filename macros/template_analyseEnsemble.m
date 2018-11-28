@@ -14,9 +14,6 @@ load 2018_seed_rxns
 seed_rxns_mat.X = -1*speye(length(seed_rxns_mat.mets));
 seed_rxns_mat.Ex_names = strcat('Ex_',seed_rxns_mat.mets);
 
-% 'cpd00013'; 'cpd00073'; 'cpd00023'; 'cpd00039'; 'cpd00054'
-proteomicsCpdList = cellstr([XXXCPDLIST]);
-
 % Load the struct containing the ensemble
 load(fullfile('..', 'outputs', 'XXXDNAME', ensembleFname))
 % m =
@@ -57,9 +54,11 @@ N=uint8(m.xt_growth>0);
 TG=array2table(N,'RowNames',m.notForGapfillCpdList);
 writetable(TG,[outpath ensembleFname, '_nfg_tab.csv'], 'WriteRowNames',true);
 
+N=[m.gc_growth; m.ngc_growth; m.xt_growth];
+TG=array2table(N,'RowNames', [m.growthCpdList; m.nonGrowthCpdList; m.notForGapfillCpdList]);
+writetable(TG,[outpath ensembleFname, '_biomass_tab.csv'], 'WriteRowNames',true);
 
-proteomics_growth = computeFBAsol(m.ensemble, seed_rxns_mat, proteomicsCpdList, ensembleFname, outpath, 1);
-N=uint8(proteomics_growth>0);
-TG=array2table(N,'RowNames',proteomicsCpdList);
-writetable(TG,[outpath ensembleFname, '_proteomics_growth.csv'], 'WriteRowNames',true);
+allCpds=[m.growthCpdList; m.nonGrowthCpdList; m.notForGapfillCpdList];
+biomass_fluxes = computeFBAsol(m.ensemble, seed_rxns_mat, allCpds, 'allCond', ensembleFname, outpath, 0, 0);
+
 

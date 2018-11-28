@@ -75,7 +75,7 @@ def main():
     #ngdf=pandas.read_csv(fname+'_ngc_growth.csv', header=None)
     gdf0=pandas.read_csv(fname+'_gc_tab.csv', index_col=0)
     ngdf=pandas.read_csv(fname+'_ngc_tab.csv', index_col=0)
-    prdf=pandas.read_csv(fname+'_proteomics_growth.csv', index_col=0)
+    prdf=pandas.read_csv(fname+'_proteomics_tab.csv', index_col=0)
 
     # Add excluded conditions to DF
     # add prdf to gdf

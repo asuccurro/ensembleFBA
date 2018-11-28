@@ -9,7 +9,6 @@ for o in Root9 Root491 Root66D1; do
 	cp ../macros/template_analyseEnsemble.m ae_${sfnm}.m
 	sed -i "s/XXXFNAME/${fnm}/g" ae_${sfnm}.m
 	sed -i "s@XXXDNAME@${mydir}@g" ae_${sfnm}.m
-	sed -i "s/XXXCPDLIST/'cpd00013'; 'cpd00073'; 'cpd00023'; 'cpd00039'; 'cpd00054'/g" ae_${sfnm}.m
 	echo $mydir
 	echo $sfnm
 	echo $fnm

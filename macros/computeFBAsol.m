@@ -1,4 +1,4 @@
-function [fba_growth] = computeFBAsol(ensemble, rxns_mat, fbaCpdList, ensembleFname, outpath, savesol)
+function [fba_growth] = computeFBAsol(ensemble, rxns_mat, fbaCpdList, fbaCpdName, ensembleFname, outpath, savesol, isminimalmedia)
 % Written by Antonella Succurro, building on the function getPA14GrowthConditions by Matt Biggs
 %--------------------------------------------------------------------------
 fbaXSources = [];
@@ -11,7 +11,12 @@ for k = 1:size(fbaCpdList,1);
   end
 end
 
-blmedia = baselinemedia();
+if isminimalmedia
+    fprintf('Using minimal media formulation\n');
+    blmedia = minimalmedia();
+else
+    blmedia = baselinemedia();
+end
 
 minimalMediaBase = zeros(length(rxns_mat.mets),1);
 b = [];
@@ -37,7 +42,7 @@ end
 [fba_growth] = ensembleFBA(ensemble,rxns_mat.Ex_names,fbaConditions,0);
 N=fba_growth;
 TG=array2table(N,'RowNames',fbaCpdList);
-writetable(TG,[outpath ensembleFname, '_fba_growth.csv'], 'WriteRowNames',true);
+writetable(TG,[outpath ensembleFname, '_fba_', fbaCpdName, '_growth.csv'], 'WriteRowNames',true);
 
 if savesol
     

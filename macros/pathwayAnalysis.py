@@ -16,6 +16,10 @@ import matplotlib.pyplot as plt
 from matplotlib import gridspec
 import seaborn as sns
 
+colors={'L-Lysine': '#8DA0CB',
+        'L-Glutamic-Acid': '#FC8D62',
+        'L-Serine': '#E78AC3',
+        'Urea': '#E78AC3'}
 
 def mergeColumns(dfdic, coln, cols, thr=0):
     ndf = pandas.DataFrame(dfdic[cols[0]][coln])
@@ -90,14 +94,41 @@ def main():
         #print(vals.shape)
         up = vals[vals[cwell] >= selthr].dropna()
         up.to_csv('%s%s%s/logfoldchange_amm_vs_%s_upFluxes.csv' % (args.iopath, args.orglist, args.condition, cname.lower()))
+        #up['KEGG'].to_csv('%skegg_ids_%s%s_amm_vs_%s_up.csv' % (args.iopath, args.orglist, args.condition, cname.lower()), header=False, index=False)
         do = vals[vals[cwell] <= -1*selthr].dropna()
         do.to_csv('%s%s%s/logfoldchange_amm_vs_%s_doFluxes.csv' % (args.iopath, args.orglist, args.condition, cname.lower()))
+        #do['KEGG'].to_csv('%skegg_ids_%s%s_amm_vs_%s_down.csv' % (args.iopath, args.orglist, args.condition, cname.lower()), header=False, index=False)
         sa = vals[np.abs(vals[cwell]) < selthr].dropna()
         sa.to_csv('%s%s%s/logfoldchange_amm_vs_%s_saFluxes.csv' % (args.iopath, args.orglist, args.condition, cname.lower()))
-        print('| Ammonium vs %s | %d | %d | %d |' % (cname, sa.shape[0], up.shape[0], do.shape[0]))
-        
+        #sa['KEGG'].to_csv('%skegg_ids_%s%s_amm_vs_%s_same.csv' % (args.iopath, args.orglist, args.condition, cname.lower()), header=False, index=False)
+        print('| Ammonium vs %s | %d | %d | %d |' % (names[i], sa.shape[0], up.shape[0], do.shape[0]))
+        formap = formatForKEGGMap(sa, up, do, '#7e7e7e %s #66C2A5' % (colors[names[i]]))
+        formap.to_csv('%skegg_ids_%s%s_amm_vs_%s.csv' % (args.iopath, args.orglist, args.condition, cname.lower()), header=False, index=False, sep='\t')
 
 
+def formatForKEGGMap(sa, up, do, colors):
+    c = colors.split(' ')
+
+    sa['Color'] = c[0]
+    sa['Opacity'] = 0.8
+    sa['Width'] = 'W15'
+    df0 = sa[['KEGG', 'Color', 'Width', 'Opacity']]
+
+
+    up['Color'] = c[1]
+    up['Opacity'] = 0.8
+    up['Width'] = 'W15'
+    df1 = up[['KEGG', 'Color', 'Width', 'Opacity']]
+
+    do['Color'] = c[2]
+    do['Opacity'] = 0.8
+    do['Width'] = 'W15'
+    df2 = do[['KEGG', 'Color', 'Width', 'Opacity']]
+
+    df = pandas.concat([df0, df1, df2])
+    
+    return df
+    
 def options():
     '''define here in-line arguments'''
     parser = argparse.ArgumentParser(description='Parsing options')
