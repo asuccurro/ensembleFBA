@@ -6,14 +6,13 @@ for o in Root9 Root491 Root66D1; do
 	fnm=ensemble_50_size_${gc}_gcs_${ngc}_ngcs_stochasticWeights_1
 	sfnmx=ensemble_${o}${c}_50_${gc}_${ngc}_1_0
 	sfnm=${sfnmx//-/_}
-	cp ../macros/template_analyseEnsemble.m ae_${sfnm}.m
-	sed -i "s/XXXFNAME/${fnm}/g" ae_${sfnm}.m
-	sed -i "s@XXXDNAME@${mydir}@g" ae_${sfnm}.m
-	sed -i "s/XXXCPDLIST/'cpd00013'; 'cpd00073'; 'cpd00023'; 'cpd00039'; 'cpd00054'/g" ae_${sfnm}.m
 	echo $mydir
 	echo $sfnm
 	echo $fnm
-	matlab -nodesktop -nosplash -nodisplay -r "ae_${sfnm};exit"
+	cp ../macros/template_rerunFBA.m bm_${sfnm}.m
+	sed -i "s/XXXFNAME/${fnm}/g" bm_${sfnm}.m
+	sed -i "s@XXXDNAME@${mydir}@g" bm_${sfnm}.m
+	matlab -nodesktop -nosplash -nodisplay -r "bm_${sfnm};exit" 
     done
 done
 

@@ -22,9 +22,9 @@ def mergeColumns(dfdic, coln, cols, thr=0):
     ndf.columns = [cols[0]]
     for c in cols[1:]:
         ndf[c] = dfdic[c][coln]
-    print(ndf.shape)
+    #print(ndf.shape)
     ndf = ndf[np.abs(ndf) > thr].dropna()
-    print(ndf.shape)
+    #print(ndf.shape)
     return ndf
 
 
@@ -50,8 +50,6 @@ def main():
     fname='%s%s%s/%s' % (args.iopath, args.orglist, args.condition, args.fname)
     freq_thr = 0.0
     fluxthr = float(args.fluxthr)
-
-    growth_df = pandas.read_csv(fname+'_fba_growth.csv', index_col=0)
 
     df = {}
     df_freq = {}
@@ -80,20 +78,23 @@ def main():
     z = np.log2(np.abs(y))
 
     selthr = float(args.selthr)
-    
+
+    print('| %s | Same | Up | Down | ' % (args.orglist))
+    print('| --- | --- | --- | --- |')
     for i in range(1,len(names)):
         cname = names[i][0:4]
         cwell = wells[i]
         vals = z[cwell]
         vals = vals.reset_index(level=0)
         vals['KEGG'] = vals['Row'].map(seed2kegg)
-        print(vals.head())
-        up = vals.dropna()[vals[cwell] >= selthr]
-        up.to_csv('%s%s%s/logfoldchange_upFluxes.csv' % (args.iopath, args.orglist, args.condition))
-        do = vals.dropna()[vals[cwell] <= -1*selthr]
-        do.to_csv('%s%s%s/logfoldchange_doFluxes.csv' % (args.iopath, args.orglist, args.condition))
-        sa = vals.dropna()[np.abs(vals[cwell]) < selthr]
-        sa.to_csv('%s%s%s/logfoldchange_saFluxes.csv' % (args.iopath, args.orglist, args.condition))
+        #print(vals.shape)
+        up = vals[vals[cwell] >= selthr].dropna()
+        up.to_csv('%s%s%s/logfoldchange_amm_vs_%s_upFluxes.csv' % (args.iopath, args.orglist, args.condition, cname.lower()))
+        do = vals[vals[cwell] <= -1*selthr].dropna()
+        do.to_csv('%s%s%s/logfoldchange_amm_vs_%s_doFluxes.csv' % (args.iopath, args.orglist, args.condition, cname.lower()))
+        sa = vals[np.abs(vals[cwell]) < selthr].dropna()
+        sa.to_csv('%s%s%s/logfoldchange_amm_vs_%s_saFluxes.csv' % (args.iopath, args.orglist, args.condition, cname.lower()))
+        print('| Ammonium vs %s | %d | %d | %d |' % (cname, sa.shape[0], up.shape[0], do.shape[0]))
         
 
 
