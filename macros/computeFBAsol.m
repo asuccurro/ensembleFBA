@@ -14,8 +14,11 @@ end
 if isminimalmedia
     fprintf('Using minimal media formulation\n');
     blmedia = minimalmedia();
+    mediastr = '_minimalmedia';
 else
+    fprintf('Using biolog media formulation\n');
     blmedia = baselinemedia();
+    mediastr = '_biologmedia';
 end
 
 minimalMediaBase = zeros(length(rxns_mat.mets),1);
@@ -42,7 +45,7 @@ end
 [fba_growth] = ensembleFBA(ensemble,rxns_mat.Ex_names,fbaConditions,0);
 N=fba_growth;
 TG=array2table(N,'RowNames',fbaCpdList);
-writetable(TG,[outpath ensembleFname, '_fba_', fbaCpdName, '_growth.csv'], 'WriteRowNames',true);
+writetable(TG,[outpath ensembleFname, '_fba_', fbaCpdName, mediastr, '_growth.csv'], 'WriteRowNames',true);
 
 if savesol
     
@@ -83,7 +86,8 @@ if savesol
         % Actually we do not care about Ex reactions
         N = s_rx;
         T=array2table(N,'RowNames',rxns_mat.rxns);
-        writetable(T,[outpath ensembleFname '_fba_sol_' char(fbaCpdList(i)) '.csv'], 'WriteRowNames',true);
-        dlmwrite([outpath ensembleFname, '_exc_rxns_' char(fbaCpdList(i)) '.csv'], s_ex, ',');
+        writetable(T,[outpath ensembleFname '_fba_sol_' char(fbaCpdList(i)) mediastr '.csv'], 'WriteRowNames',true);
+        %writetable(T,[outpath ensembleFname '_fba_sol_' char(fbaCpdList(i)) '.csv'], 'WriteRowNames',true);
+        dlmwrite([outpath ensembleFname, '_exc_rxns_' char(fbaCpdList(i)) mediastr '.csv'], s_ex, ',');
     end
 end
