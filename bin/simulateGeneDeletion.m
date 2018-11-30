@@ -24,7 +24,9 @@ else
         curGPR = model.grRules{i};
         curGPR = strrep(curGPR,gene,'0'); % Delete gene
         curGPR = strrep(curGPR,'or','|'); % Change logical operators
+        curGPR = strrep(curGPR,'OR','|'); % Change logical operators
         curGPR = strrep(curGPR,'and','&');
+        curGPR = strrep(curGPR,'AND','&');
         curGPR = strrep(curGPR,'GAP_FILLED','1'); % Keep rxns not associated with a gene
         curGPR = strrep(curGPR,'Unknown','1');
         curGPR = strrep(curGPR,'Unassigned','1');

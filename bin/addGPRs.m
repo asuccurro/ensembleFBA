@@ -1,4 +1,4 @@
-function [updatedModelList] = addGPRs(modelList,rxn_gpr_mapping)
+function [updatedModelList] = addGPRs(modelList,rxn_gpr_mapping,figstr)
 %-------------------------------------------------------------------------- 
 % addGPRs - Add gene-protein-reaction associations to each model in the
 % list.
@@ -42,6 +42,10 @@ for i = 1:length(modelList)
         rxn_i = ismember(spontRxns,curRxn);
         if sum(rxn_i) > 0
             GPR = 'SPONTANEOUS';
+        end
+
+        if nargin > 2
+            GPR = strrep(GPR, figstr, '');
         end
         
         mdl.grRules{j} = GPR;

@@ -29,8 +29,14 @@ rxns = tdfread(genomeFile);
 trimmed_rxnList = rxns.id(:,1:8);
 trimmed_rxnList = strtrim(cellstr(trimmed_rxnList));
 
+%gprfeat is the updated field with peg IDs from ModelSEED, as the KBase models had a different format
+if isfield(rxns, 'gprfeat')
+    trimmed_gprs = strtrim(cellstr(rxns.gprfeat));
+else
+    trimmed_gprs = strtrim(cellstr(rxns.gpr));
+end
+
 %Select only rxns with (non empty? check!) gpr field
-trimmed_gprs = strtrim(cellstr(rxns.gpr));
 %The only empty gpr field is the biomass, rxns w/o gpr have "Unknown"
 keep = ~cellfun(@isempty,trimmed_gprs);
 trimmed_rxnList = trimmed_rxnList(keep);
