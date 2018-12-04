@@ -28,7 +28,8 @@ def main():
     name2w=biologNames.set_index('Compound')['Well'].T.to_dict()
     w2class=biologNames.set_index('Well')['Class'].T.to_dict()
 
-    print('\n****N.B these number do not take into account excluded conditions!***\n')
+    if verbose:
+        print('\n****N.B these number do not take into account excluded conditions!***\n')
     
     #ensemble_21_size_26_gcs_11_ngcs_stochasticWeights_0
     tmpstr = args.fname.split('_')
@@ -50,8 +51,7 @@ def main():
     for o in orglist:
         flist[o] = args.iopath+o+args.condition+'/'+args.fname
         conditions_df[o] = pandas.read_csv(flist[o]+'_conditions.csv')
-        growth_fl[o] = pandas.read_csv(flist[o]+'_fba_growth.csv', index_col=0)
-        #growth_fl[o] = pandas.read_csv(flist[o]+'_biomassFluxes.csv', index_col=0)
+        growth_fl[o] = pandas.read_csv(flist[o]+'_fba_allCond_biologmedia_growth.csv', index_col=0)
         growth_fl[o] = growth_fl[o].where(growth_fl[o] > 0.000000001, 0)
         
         gfc = []
@@ -124,7 +124,8 @@ def main():
                     activity = gf_means[o][c]*(gng_masked[o].loc[c,'TotG']/(gng_masked[o].loc[c,'TotG'] + gng_masked[o].loc[c,'TotNG']))
                 else:
                     activity = np.nan
-                    print(cc, ' (', name2w[cc], ') not in index ')
+                    if verbose:
+                        print(cc, ' (', name2w[cc], ') not in index ')
                 cstr = cstr+ (',%.3f' % activity)
             ofile.write('%s\n' % cstr)
     df=pandas.read_csv(args.iopath+'activity_as_weighted_growth_average'+args.condition+'.csv', sep=',')

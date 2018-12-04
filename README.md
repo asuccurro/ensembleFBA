@@ -89,33 +89,49 @@ The jobs can be monitored via the log files (`/tmp/ensemble_Root*`) and error fi
 ### Flux Balance Analysis on ensembles
 
 Once the ensembles are successfully generated, ensembleFBA will perform FBA on all the networks on all the conditions.
-The script:
+Run:
 
 ```bash
 cd $ensembleFBA/runmatlab
 source analyseEnsemble_manuscript.sh
+source rerunFBA_manuscript.sh
 ```
 
-will produce various files, all named starting with "ensemble_X_size_Y_gcs_Z_ngcs_stochasticWeights_1". The files are described below.
+to produce various files, all named starting with "ensemble_X_size_Y_gcs_Z_ngcs_stochasticWeights_1". The files are described below.
 
 #### _conditions.csv
 
-File containing the information about the ordered gapfilling conditions (columns, "Gx" or "NGx") for each of the generated network in the ensemble (rows, numbered).
+File produced by `analyseEnsemble_manuscript.sh`, containing the information about the ordered gapfilling conditions (columns, "Gx" or "NGx") for each of the generated network in the ensemble (rows, numbered).
+This file is used to create a mask for unbiased analyses of the model predictions.
 
 #### _gc_tab.csv; _ngc_tab.csv; _nfg_tab.csv
 
-Files containing the growth (1s) or no growth (0s) prediction for the networks of the ensemble (columns "Nx") for each condition (rows "cpdXXXXX"), separated
-for growth (gc), no growth (ngc) and not for gapfill (nfg) experimental conditions.
+Files produced by `analyseEnsemble_manuscript.sh`, containing the growth (1s) or no growth (0s) prediction for the networks of the ensemble (columns "Nx") for each condition (rows "cpdXXXXX"), separated
+for growth (gc), no growth (ngc) and not for gapfill (nfg) experimental conditions. These files are used in the script `makeBiologFigure.py`.
 
-#### _proteomics_growth.csv
+#### _biomass_tab.csv
 
-File containing the growth (1s) or no growth (0s) prediction for the networks of the ensemble (columns, "Nx") for
-the conditions passed as proteomicsCpdList variable in the `00_analyseEnsemble.m` template script (`XXXCPDLIST`).
+File produced by `analyseEnsemble_manuscript.sh`, containing the growth flux prediction obtained while building the ensemble for all the networks of the ensemble (columns, "Nx") for
+all the media conditions (rows "cpdXXXXX").
+
+#### _fba_allCond_biologmedia_growth.csv
+
+File produced by `analyseEnsemble_manuscript.sh`, containing the growth flux prediction obtained re-running FBA with the biolog media flux constraints for all the networks of the ensemble (columns, "Nx") for all the media conditions (rows "cpdXXXXX"). This file is used in the script `computeFractionActivity.py`.
+
+
+#### _proteomics_tab.csv
+
+File produced by `rerunFBA_manuscript.sh`, containing the growth (1s) or no growth (0s) prediction for the networks of the ensemble (columns "Nx") for each condition
+on which proteomics was performed (passed to the script `template_rerunFBA.m` as `XXXCPDLIST`).
+
+#### _fba_proteomics_minimalmedia_growth.csv
+
+File produced by `rerunFBA_manuscript.sh`, containing the growth flux prediction obtained re-running FBA with the media flux constraints of the proteomics experiments for all the networks of the ensemble (columns, "Nx") for the proteomics media conditions (rows "cpdXXXXX"). 
 
 #### _fba_sol_cpdXXXXX.csv and _exc_rxns_cpdXXXXX.csv
 
 Files containing the full FBA flux solutions for each reaction (rows, "rxnXXXXX") for each network  of the ensemble (columns, "Nx").
-
+These files are used in the script `pathwayAnalysis.py`.
 
 ### Biolog plots
 
@@ -125,6 +141,70 @@ source plotBiolog.sh
 ```
 
 Produces plots of Biolog Plate (manuscript Figure XYZ). Prints the table with statistical figures for the ensemble (Accuracy, Precision, Recall).
+
+Accuracy:
+
+```math
+A = \dfrac{TP + TN}{TP + TN + FP + FN}
+```
+
+Recall (sensitivity):
+
+```math
+R = \dfrac{TP}{TP + FN}
+```
+
+Precision:
+
+```math
+P = \dfrac{TP}{TP + FP}
+```
+
+
+* Condition exclude_not_found_and_G12:
+
+| | A | P | R |
+| - | - | - | - |
+| Root9 | | | |
+| Masked Ensemble | 0.775 | 0.833 | 0.833 |
+| Random Ensemble | 0.512 | 0.640 | 0.571 |
+| Unmasked Ensemble | 0.950 | 0.963 | 0.963 |
+| Random Ensemble | 0.605 | 0.762 | 0.571 |
+| Root491 | | | |
+| Masked Ensemble | 0.787 | 0.873 | 0.828 |
+| Random Ensemble | 0.488 | 0.708 | 0.531 |
+| Unmasked Ensemble | 0.925 | 0.964 | 0.931 |
+| Random Ensemble | 0.605 | 0.857 | 0.562 |
+| Root66D1 | | | |
+| Masked Ensemble | 0.787 | 0.857 | 0.808 |
+| Random Ensemble | 0.395 | 0.500 | 0.423 |
+| Unmasked Ensemble | 0.925 | 0.942 | 0.942 |
+| Random Ensemble | 0.558 | 0.667 | 0.538 |
+
+* Condition exclude_5N_and_nf_and_G12:
+
+| | A | P | R |
+| - | - | - | - |
+| Root9 | | | |
+| Masked Ensemble | 0.750 | 0.793 | 0.852 |
+| Random Ensemble | 0.488 | 0.650 | 0.464 |
+| Unmasked Ensemble | 0.975 | 0.964 | 1.000 |
+| Random Ensemble | 0.605 | 0.762 | 0.571 |
+| Root491 | | | |
+| Masked Ensemble | 0.800 | 0.875 | 0.845 |
+| Random Ensemble | 0.442 | 0.722 | 0.406 |
+| Unmasked Ensemble | 0.900 | 0.963 | 0.897 |
+| Random Ensemble | 0.605 | 0.857 | 0.562 |
+| Root66D1 | | | |
+| Masked Ensemble | 0.762 | 0.851 | 0.769 |
+| Random Ensemble | 0.558 | 0.684 | 0.500 |
+| Unmasked Ensemble | 1.000 | 1.000 | 1.000 |
+| Random Ensemble | 0.558 | 0.667 | 0.538 |
+
+
+
+
+
 
 
 ### Fraction activiy
@@ -136,7 +216,83 @@ python computeFractionActivity.py
 deactivate
 ```
 
-Produces the file `../outputs/activity_exclude_not_found_and_G12.csv`. Different settings can be passed through argparse to the script.
+Produces the files `../outputs/activity_`. Different versions of activity measurements are considered:
+
+* growth_fraction: fraction of networks of the ensemble predicting growth
+* growth_average: average flux for biomass function in the ensemble
+* weighted_growth_average: average flux weighted by the fraction of active networks
+
+
+### Metabolic pathways
+
+```bash
+cd $ensembleFBA/macros
+source ../venvpy/bin/activate
+for r in Root9 Root491 Root66D1; do
+    python pathwayAnalysis.py -o $r -e '_exclude_5N_and_nf_and_G12' -p '../outputs/' -f	'ensemble_50_size_26_gcs_11_ngcs_stochasticWeights_1'>>../outputs/numbers_reaction_log_fold_change.md
+done
+deactivate
+```
+
+Compare FBA solutions in each strain growing on Glutamate, Serine or Lysine, compared to Ammonium. Obtain average flux among
+the ensemble solutions and weight by the "frequency" (i.e. fraction of time the reaction is active). Check the "up/down regulated" reactions comparing the fluxes obtained on Glutamate, Serine or Lysine to the ones on Ammonium and computing the log2 fold change. The threshold is set to 1. Produces various files in `../outputs/` and in the strains' output folders.
+
+#### kegg_ids_
+
+Files for input to the https://pathways.embl.de/ pathway visualizer tool.
+
+#### numbers_reaction_log_fold_change.md
+
+Tables in Markdown format: 
+
+| Root9 | Same | Up | Down |
+| --- | --- | --- | --- |
+| Ammonium vs L-Gl | 502 | 185 | 195 |
+| Ammonium vs L-Ly | 479 | 200 | 203 |
+| Ammonium vs L-Se | 510 | 184 | 188 |
+| Ammonium vs Urea | 504 | 186 | 192 |
+
+
+| Root491 | Same | Up | Down |
+| --- | --- | --- | --- |
+| Ammonium vs L-Gl | 513 | 221 | 182 |
+| Ammonium vs L-Ly | 485 | 256 | 175 |
+| Ammonium vs L-Se | 494 | 237 | 185 |
+| Ammonium vs Urea | 477 | 213 | 226 |
+
+
+| Root66D1 | Same | Up | Down |
+| --- | --- | --- | --- |
+| Ammonium vs L-Gl | 465 | 188 | 194 |
+| Ammonium vs L-Ly | 466 | 189 | 192 |
+| Ammonium vs L-Se | 507 | 210 | 130 |
+| Ammonium vs Urea | 472 | 177 | 198 |
+
+
+#### logfoldchange_
+
+Files storing the log fold change values for the different comparisons, separated for up/down/same levels.
+
+### Gene essentiality analysis
+
+```bash
+cd $ensembleFBA/runmatlab
+matlab -nodesktop -nosplash -nodisplay  -r "geneEssentiality; quit"
+mkdir ../outputs/geneEssentiality/
+matlab -nodesktop -nosplash -nodisplay  -r "template_geneEssAn; quit"
+```
+
+Runs FBA on all the networks iteratively "knockin-out" single genes (based on GPR information from the database) and
+testing growth on the 5 media on which proteomics was performed. The first script produces the `geneEssentiality_cpdXXXXX.mat` files,
+the second script produces the `../outputs/geneEssentiality/RootX_XXXX.csv` files with the list of all genes and how many
+networks predict them as essential.
+
+```bash
+cd $ensembleFBA/macros/
+source plotGE.sh
+```
+
+Plots some stats on shared essential genes.
 
 
 ## Instructions for novel runs
