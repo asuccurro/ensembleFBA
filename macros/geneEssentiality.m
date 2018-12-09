@@ -7,13 +7,16 @@ seed_rxns_mat.Ex_names = strcat('Ex_',seed_rxns_mat.mets);
 ensembles = cell(50,3);
 speciesOrder = {'Root9', 'Root491', 'Root66D1'};
 speciesFig = {'fig|1736604.3.', 'fig|1736548.3.', 'fig|1736582.3.'};
+speciesGenBank = {'ASE33_', 'ASD46_', 'ASE09_'};
 
 N=50;
 
 for i = 1:length(speciesOrder)
     load(fullfile('..', 'outputs', [speciesOrder{i} '_exclude_not_found_and_G12'], 'ensemble_50_size_26_gcs_11_ngcs_stochasticWeights_1'))
-    [speciesGenomicData] = getGSMNMGenomeAnnotations(['MPI' speciesOrder{i} '-reactions_with_GPR.tsv']);
-    e = addGPRs(m.ensemble,speciesGenomicData.rxn_GPR_mapping, speciesFig{i});
+    %[speciesGenomicData] = getGSMNMGenomeAnnotations(['MPI' speciesOrder{i} '-reactions_with_GPR.tsv']);
+    %e = addGPRs(m.ensemble,speciesGenomicData.rxn_GPR_mapping, speciesFig{i});
+    [speciesGenomicData] = getGSMNMGenomeAnnotations(['MPI' speciesOrder{i} '-reactions.tsv']);
+    e = addGPRsGenBankIDs(m.ensemble,speciesGenomicData.rxn_GPR_mapping, speciesGenBank{i});
     ensembles(:,i) = e;
 end
 

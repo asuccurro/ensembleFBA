@@ -33,6 +33,7 @@ else
         curGPR = strrep(curGPR,'unassigned','1');
         curGPR = strrep(curGPR,'SPONTANEOUS','1');
         curGPR = regexprep(curGPR,'peg.[0-9]+','1'); % Keep all other genes
+        curGPR = regexprep(curGPR,'RS[0-9]+','1'); % Keep all other genes
         curGPR = regexprep(curGPR,'PA14_[0-9]+','1'); % Keep all other genes
         
         if length(curGPR) > 0
