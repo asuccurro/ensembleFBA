@@ -33,7 +33,7 @@ for i = 1:length(modelList)
             GPR = rxn_gpr_mapping.gprs{rxn_i};
             
             % Extract all gene IDs
-            gs = regexp(GPR,'_RS\d+','match');
+            gs = regexp(GPR,'RS\d+','match');
             geneList = [geneList gs];
         else
             GPR = 'GAP_FILLED';

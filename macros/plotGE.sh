@@ -1,8 +1,8 @@
 source ../venvpy/bin/activate
 
-for c in A M; do
+for c in M; do
     # U give empty!
-    for t in O C; do
+    for t in C; do
 	python getEssentialGenesStats.py -D -${t} -${c}
     done
 done

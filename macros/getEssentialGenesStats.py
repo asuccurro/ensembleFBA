@@ -32,6 +32,7 @@ mycolors={'lysi': '#8DA0CB',
           'Root66D1': '#dfe121'}
 
 patricids = {'Root9': 'fig|1736604.3', 'Root491':'fig|1736548.3', 'Root66D1': 'fig|1736582.3'}
+genbankids= {'Root9': 'ASE33_', 'Root491':'ASD46_', 'Root66D1': 'ASE09_'}
 
 
 def main():
@@ -58,7 +59,7 @@ def main():
     dfs_ge = {}
     
     orgs = 'Root9 Root491 Root66D1'.split(' ')
-    cond = 'ammo glut lysi seri'.split(' ')
+    cond = 'ammo glut lysi seri urea'.split(' ')
 
     cmap_c = LinearSegmentedColormap.from_list('cmap_c', [mycolors[x] for x in cond], N=len(cond))
     cmap_o = LinearSegmentedColormap.from_list('cmap_o', [mycolors[x] for x in orgs], N=len(cond))
@@ -73,11 +74,12 @@ def main():
                 dfs_ge[o][c] = dfs_ge[o][c][dfs_ge[o][c][c] > Nthr]
                 sets_ge[o][c] = set((dfs_ge[o][c].index))
             if args.distr:
-                df = pandas.concat([dfs_ge[o][cond[0]], dfs_ge[o][cond[1]], dfs_ge[o][cond[2]], dfs_ge[o][cond[3]] ], axis=1, sort=True)
+                df = pandas.concat([dfs_ge[o][cond[0]], dfs_ge[o][cond[1]], dfs_ge[o][cond[2]], dfs_ge[o][cond[3]], dfs_ge[o][cond[4]] ], axis=1, sort=True)
                 #print(df.head())
-                plotBarh(df, cmap_c, '%splot_%s%s.png' % (args.iopath, o, Nstr))
+                plotBarh(df, cmap_c, '%sessential_genes_distr_%s%s.png' % (args.iopath, o, Nstr), o)
                 #plotBar(df, cond, '/tmp/plot_%s.png' % o)
                 #stacked_bar_chart(df, cond, 'genes', 'xyz', 'x', 'y', '/tmp/plot_%s.png' % o, Color('#dfe121'), Color('#e14821'))
+            getUnique(dfs_ge[o], cond, '%sunique_eg_%s%s.csv' % (args.iopath, o, Nstr), genbankids[o])
             #checkSets(dfs_ge[o], cond, '%sshared_eg_%s%s_' % (args.iopath, o, Nstr))
         plotVenns(sets_ge, orgs, cmap_c, '%svenn_strains%s.png' % (args.iopath, Nstr))
     
@@ -108,7 +110,33 @@ def checkSets(df, ls, oname):
         tmp.to_csv('%s%s.csv' % (oname, '_'.join(p)))
     return
 
+
+def getUnique(df, ls, oname, strainpre):
+    for i in range(len(ls)):
+        allother = ls[:]
+        cond = allother.pop(i)
+        sao = set()
+        print(cond)
+        for j in allother:
+            sao = sao | set(df[j].index)
+        uniques = set(df[cond].index) - sao
+        with open(oname, 'w') as ofile:
+            for u in uniques:
+                ofile.write('%s%s\n' % (strainpre, u))
+        
+    return
+
 def plotVenns(df, subs, mycmap, oname):
+
+    fig, axes = plt.subplots(len(subs), 1, figsize=(5, 4*len(subs)))
+    for i, c in enumerate(subs):
+        axes[i].set_title(mylabels[c])
+        venn.venn(df[c], cmap=mycmap, ax=axes[i], fontsize=6, legend_loc="best")
+    fig.tight_layout(pad=0.1)
+    plt.savefig(oname)
+    return
+
+def plotVenns4(df, subs, mycmap, oname):
 
     rw = [0, 0, 1, 1]
     cl = [0, 1, 0, 1]
@@ -120,12 +148,14 @@ def plotVenns(df, subs, mycmap, oname):
     plt.savefig(oname)
     return
 
-def plotBarh(df, mycmap, oname):
+def plotBarh(df, mycmap, oname, strain):
     f, ax = plt.subplots(figsize=(6, 15))
     df['total'] = df.sum(axis=1)
     df=df.sort_values("total", ascending=False)
     df = df.drop('total', axis=1)
     df.plot.barh(stacked=True, colormap=mycmap, ax=ax)
+    ax.set_title('Predicted essential genes for '+strain)
+    ax.set_xlabel('N of networks')
     plt.savefig(oname)
 
 def plotBar(df, subbars, oname):
