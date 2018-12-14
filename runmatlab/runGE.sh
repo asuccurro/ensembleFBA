@@ -1,3 +1,5 @@
+mkdir -p ../outputs/geneEssentiality/
+
 orgs=( Root9 Root491 Root66D1 )
 gbid=( ASE33_ ASD46_ ASE09_ )
 cpds=( cpd00013 cpd00023 cpd00039 cpd00054 cpd00073 )

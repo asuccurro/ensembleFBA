@@ -277,14 +277,12 @@ Files storing the log fold change values for the different comparisons, separate
 
 ```bash
 cd $ensembleFBA/runmatlab
-matlab -nodesktop -nosplash -nodisplay  -r "geneEssentiality; quit"
-mkdir ../outputs/geneEssentiality/
-matlab -nodesktop -nosplash -nodisplay  -r "template_geneEssAn; quit"
+source runGE.sh
 ```
 
 Runs FBA on all the networks iteratively "knockin-out" single genes (based on GPR information from the database) and
-testing growth on the 5 media on which proteomics was performed. The first script produces the `geneEssentiality_cpdXXXXX.mat` files,
-the second script produces the `../outputs/geneEssentiality/RootX_XXXX.csv` files with the list of all genes and how many
+testing growth on the 5 media on which proteomics was performed. The script produces the `geneEssentiality_cpdXXXXX.mat` files,
+and the `../outputs/geneEssentiality/RootX_XXXX.csv` files with the list of all genes and how many
 networks predict them as essential.
 
 ```bash
